@@ -1,0 +1,68 @@
+import { bi, t } from "@/lib/lang";
+
+/**
+ * Day 5 reference list. Cards cite by key; each `References` accordion shows the union of what its own cards cite. `chip` is the short
+ * "Author Year" label a Source chip prints. Every entry is a published work, a statute or an official standard cited by its usual
+ * reference; the bracketed note says what the card takes from it.
+ */
+export type RefKey =
+  | "smith1956"
+  | "wind1978"
+  | "dickson1987"
+  | "kotler2022"
+  | "shapiro1984"
+  | "christensen2016"
+  | "mckinsey2021"
+  | "gartner2019"
+  | "gilmore1997"
+  | "pine1993"
+  | "burgess2021"
+  | "gdpr"
+  | "uwg7"
+  | "tdddg25"
+  | "bsic5"
+  | "nis2"
+  | "coyne2008"
+  | "porter1980"
+  | "zoltners2004"
+  | "kaplan2004"
+  | "courtney1997"
+  | "hubbard2014"
+  | "klein2007"
+  | "doran1981"
+  | "deming1986";
+
+export type Reference = { key: RefKey; chip: string; full: string };
+
+export const REFERENCES: Record<RefKey, Reference> = bi({
+  smith1956: { key: "smith1956" as RefKey, chip: "Smith 1956", full: t("Smith, W. R. (1956). Product differentiation and market segmentation as alternative marketing strategies. Journal of Marketing, 21(1), 3–8. (The founding idea: a heterogeneous market is served better as several smaller, more similar ones.)", "Smith, W. R. (1956). Product differentiation and market segmentation as alternative marketing strategies. Journal of Marketing, 21(1), 3–8. (Die Grundidee: Ein heterogener Markt wird besser als mehrere kleinere, ähnlichere Märkte bedient.)") },
+  wind1978: { key: "wind1978" as RefKey, chip: "Wind 1978", full: t("Wind, Y. (1978). Issues and advances in segmentation research. Journal of Marketing Research, 15(3), 317–337. (Segment on the basis that predicts the response you care about, not on the easiest data.)", "Wind, Y. (1978). Issues and advances in segmentation research. Journal of Marketing Research, 15(3), 317–337. (Nach der Grundlage segmentieren, die die gewünschte Reaktion vorhersagt, nicht nach den bequemsten Daten.)") },
+  dickson1987: { key: "dickson1987" as RefKey, chip: "Dickson & Ginter 1987", full: t("Dickson, P. R., & Ginter, J. L. (1987). Market segmentation, product differentiation, and marketing strategy. Journal of Marketing, 51(2), 1–10. (Segments are defined by differences in demand: needs and responses.)", "Dickson, P. R., & Ginter, J. L. (1987). Market segmentation, product differentiation, and marketing strategy. Journal of Marketing, 51(2), 1–10. (Segmente werden über Unterschiede in der Nachfrage definiert: Bedarfe und Reaktionen.)") },
+  kotler2022: { key: "kotler2022" as RefKey, chip: "Kotler et al. 2022", full: t("Kotler, P., Keller, K. L., & Chernev, A. (2022). Marketing Management (16th ed.). Pearson. (Segmentation, targeting and positioning; the criteria of a useful segment: measurable, substantial, accessible, differentiable, actionable.)", "Kotler, P., Keller, K. L., & Chernev, A. (2022). Marketing Management (16. Aufl.). Pearson. (Segmentierung, Targeting und Positionierung; die Kriterien eines nützlichen Segments: messbar, substanziell, erreichbar, unterscheidbar, umsetzbar.)") },
+  shapiro1984: { key: "shapiro1984" as RefKey, chip: "Shapiro & Bonoma 1984", full: t("Shapiro, B. P., & Bonoma, T. V. (1984). How to segment industrial markets. Harvard Business Review, 62(3), 104–110. (The nested approach: from firmographics on the outside to purchasing approach, situation and personal characteristics inside.)", "Shapiro, B. P., & Bonoma, T. V. (1984). How to segment industrial markets. Harvard Business Review, 62(3), 104–110. (Der Nested Approach: von Firmografie außen bis zu Einkaufsverhalten, Situation und persönlichen Merkmalen innen.)") },
+  christensen2016: { key: "christensen2016" as RefKey, chip: "Christensen et al. 2016", full: t("Christensen, C. M., Hall, T., Dillon, K., & Duncan, D. S. (2016). Know your customers' “jobs to be done”. Harvard Business Review, 94(9), 54–62. (Customers hire a product to get a job done; the job, not the customer's attributes, explains the choice.)", "Christensen, C. M., Hall, T., Dillon, K., & Duncan, D. S. (2016). Know your customers' „jobs to be done“. Harvard Business Review, 94(9), 54–62. (Kunden „engagieren“ ein Produkt für eine Aufgabe; die Aufgabe, nicht die Merkmale des Kunden, erklärt die Wahl.)") },
+  mckinsey2021: { key: "mckinsey2021" as RefKey, chip: "McKinsey 2021", full: t("Arora, N., Ensslen, D., Fiedler, L., Liu, W. W., Robinson, K., Stein, E., & Schüler, G. (2021). The value of getting personalization right, or wrong, is multiplying. McKinsey & Company. (71% of customers expect personalisation, 76% are frustrated without it; it most often lifts revenue by 10 to 15%.)", "Arora, N., Ensslen, D., Fiedler, L., Liu, W. W., Robinson, K., Stein, E., & Schüler, G. (2021). The value of getting personalization right, or wrong, is multiplying. McKinsey & Company. (71 % der Kunden erwarten Personalisierung, 76 % sind ohne sie frustriert; meist steigert sie den Umsatz um 10 bis 15 %.)") },
+  gartner2019: { key: "gartner2019" as RefKey, chip: "Gartner 2019", full: t("Gartner (2019). The B2B buying journey. Gartner for Sales. (B2B buyers spend about 17% of their buying time meeting potential suppliers; most of the work happens without a seller.)", "Gartner (2019). The B2B buying journey. Gartner for Sales. (B2B-Käufer verbringen etwa 17 % ihrer Kaufzeit mit Treffen mit möglichen Anbietern; der Großteil der Arbeit passiert ohne Verkäufer.)") },
+  gilmore1997: { key: "gilmore1997" as RefKey, chip: "Gilmore & Pine 1997", full: t("Gilmore, J. H., & Pine, B. J. (1997). The four faces of mass customization. Harvard Business Review, 75(1), 91–101. (Customise only what the customer values; keep the rest standard.)", "Gilmore, J. H., & Pine, B. J. (1997). The four faces of mass customization. Harvard Business Review, 75(1), 91–101. (Nur anpassen, was der Kunde schätzt; den Rest standardisiert lassen.)") },
+  pine1993: { key: "pine1993" as RefKey, chip: "Pine 1993", full: t("Pine, B. J. (1993). Mass Customization: The New Frontier in Business Competition. Harvard Business School Press. (Modular components let a firm offer variety at close to standard cost.)", "Pine, B. J. (1993). Mass Customization: The New Frontier in Business Competition. Harvard Business School Press. (Modulare Bausteine erlauben Vielfalt zu fast standardisierten Kosten.)") },
+  burgess2021: { key: "burgess2021" as RefKey, chip: "Burgess & Munn 2021", full: t("Burgess, B., & Munn, D. (2021). A Practitioner's Guide to Account-Based Marketing (2nd ed.). Kogan Page. (One-to-one, one-to-few and one-to-many: how far to personalise depends on what an account is worth.)", "Burgess, B., & Munn, D. (2021). A Practitioner's Guide to Account-Based Marketing (2. Aufl.). Kogan Page. (One-to-one, One-to-few und One-to-many: Wie weit man personalisiert, hängt davon ab, was ein Account wert ist.)") },
+  gdpr: { key: "gdpr" as RefKey, chip: "GDPR 2016", full: t("Regulation (EU) 2016/679 (General Data Protection Regulation), in particular Art. 5(1)(c) data minimisation, Art. 6(1)(f) legitimate interests, Art. 21 the right to object to direct marketing, Art. 22 automated decisions and profiling.", "Verordnung (EU) 2016/679 (Datenschutz-Grundverordnung, DSGVO), insbesondere Art. 5 Abs. 1 lit. c Datenminimierung, Art. 6 Abs. 1 lit. f berechtigte Interessen, Art. 21 Widerspruchsrecht gegen Direktwerbung, Art. 22 automatisierte Entscheidungen und Profiling.") },
+  uwg7: { key: "uwg7" as RefKey, chip: "§ 7 UWG", full: t("Gesetz gegen den unlauteren Wettbewerb (German Act against Unfair Competition), § 7: unsolicited advertising by email generally needs the recipient's prior express consent, also between businesses.", "Gesetz gegen den unlauteren Wettbewerb (UWG), § 7: Werbung per E-Mail braucht grundsätzlich die vorherige ausdrückliche Einwilligung des Empfängers, auch zwischen Unternehmen.") },
+  tdddg25: { key: "tdddg25" as RefKey, chip: "§ 25 TDDDG", full: t("Telekommunikation-Digitale-Dienste-Datenschutz-Gesetz (formerly TTDSG), § 25: storing or reading information on a user's device, such as tracking cookies, needs consent unless strictly necessary.", "Telekommunikation-Digitale-Dienste-Datenschutz-Gesetz (TDDDG, früher TTDSG), § 25: Das Speichern oder Auslesen von Informationen auf dem Endgerät, etwa Tracking-Cookies, braucht eine Einwilligung, außer es ist unbedingt erforderlich.") },
+  bsic5: { key: "bsic5" as RefKey, chip: "BSI C5", full: t("Bundesamt für Sicherheit in der Informationstechnik (2020). Cloud Computing Compliance Criteria Catalogue (C5:2020); updated as C5:2026. (The German audited baseline for cloud security that regulated buyers ask for.)", "Bundesamt für Sicherheit in der Informationstechnik (2020). Cloud Computing Compliance Criteria Catalogue (C5:2020); aktualisiert als C5:2026. (Die geprüfte deutsche Grundlage für Cloud-Sicherheit, nach der regulierte Käufer fragen.)") },
+  nis2: { key: "nis2" as RefKey, chip: "NIS2 2022", full: t("Directive (EU) 2022/2555 (NIS2) on measures for a high common level of cybersecurity across the Union. (Operators in sectors such as energy and health must document risk-management measures.)", "Richtlinie (EU) 2022/2555 (NIS2) über Maßnahmen für ein hohes gemeinsames Cybersicherheitsniveau in der Union. (Betreiber in Sektoren wie Energie und Gesundheit müssen Risikomanagement-Maßnahmen dokumentieren.)") },
+  coyne2008: { key: "coyne2008" as RefKey, chip: "Coyne 2008", full: t("Coyne, K. (2008). Enduring ideas: The GE–McKinsey nine-box matrix. McKinsey Quarterly, September. (Market attractiveness against the strength of your position; invest where both are high.)", "Coyne, K. (2008). Enduring ideas: The GE–McKinsey nine-box matrix. McKinsey Quarterly, September. (Marktattraktivität gegen die Stärke der eigenen Position; investieren, wo beides hoch ist.)") },
+  porter1980: { key: "porter1980" as RefKey, chip: "Porter 1980", full: t("Porter, M. E. (1980). Competitive Strategy. Free Press. (Focus strategy: serving a chosen segment better than broad competitors can.)", "Porter, M. E. (1980). Competitive Strategy. Free Press. (Fokusstrategie: ein gewähltes Segment besser bedienen, als es breit aufgestellte Wettbewerber können.)") },
+  zoltners2004: { key: "zoltners2004" as RefKey, chip: "Zoltners et al. 2004", full: t("Zoltners, A. A., Sinha, P., & Lorimer, S. E. (2004). Sales Force Design for Strategic Advantage. Palgrave Macmillan. (Match the sales channel to the account's value and buying process: key account, field, inside, partner, digital.)", "Zoltners, A. A., Sinha, P., & Lorimer, S. E. (2004). Sales Force Design for Strategic Advantage. Palgrave Macmillan. (Den Vertriebskanal auf Wert und Kaufprozess des Accounts abstimmen: Key Account, Außendienst, Inside Sales, Partner, digital.)") },
+  kaplan2004: { key: "kaplan2004" as RefKey, chip: "Kaplan & Anderson 2004", full: t("Kaplan, R. S., & Anderson, S. R. (2004). Time-driven activity-based costing. Harvard Business Review, 82(11), 131–138. (Cost to serve: some customers cost more to serve than they bring in.)", "Kaplan, R. S., & Anderson, S. R. (2004). Time-driven activity-based costing. Harvard Business Review, 82(11), 131–138. (Cost to Serve: Manche Kunden kosten mehr, als sie einbringen.)") },
+  courtney1997: { key: "courtney1997" as RefKey, chip: "Courtney et al. 1997", full: t("Courtney, H., Kirkland, J., & Viguerie, P. (1997). Strategy under uncertainty. Harvard Business Review, 75(6), 67–79. (No-regret moves, options and big bets: match the commitment to how much is known.)", "Courtney, H., Kirkland, J., & Viguerie, P. (1997). Strategy under uncertainty. Harvard Business Review, 75(6), 67–79. (No-regret moves, Optionen und große Wetten: die Festlegung daran ausrichten, wie viel man weiß.)") },
+  hubbard2014: { key: "hubbard2014" as RefKey, chip: "Hubbard 2014", full: t("Hubbard, D. W. (2014). How to Measure Anything (3rd ed.). Wiley. (The value of information: measure what would change the decision, and stop when more data would not.)", "Hubbard, D. W. (2014). How to Measure Anything (3. Aufl.). Wiley. (Der Wert von Information: messen, was die Entscheidung ändern würde, und aufhören, wenn mehr Daten es nicht würden.)") },
+  klein2007: { key: "klein2007" as RefKey, chip: "Klein 2007", full: t("Klein, G. (2007). Performing a project premortem. Harvard Business Review, 85(9), 18–19. (Imagine the plan has failed and write down why, before it starts.)", "Klein, G. (2007). Performing a project premortem. Harvard Business Review, 85(9), 18–19. (Sich vorstellen, der Plan sei gescheitert, und aufschreiben warum, bevor er startet.)") },
+  doran1981: { key: "doran1981" as RefKey, chip: "Doran 1981", full: t("Doran, G. T. (1981). There's a S.M.A.R.T. way to write management's goals and objectives. Management Review, 70(11), 35–36. (Specific, measurable, assignable, realistic, time-related.)", "Doran, G. T. (1981). There's a S.M.A.R.T. way to write management's goals and objectives. Management Review, 70(11), 35–36. (Spezifisch, messbar, zuordenbar, realistisch, terminiert.)") },
+  deming1986: { key: "deming1986" as RefKey, chip: "Deming 1986", full: t("Deming, W. E. (1986). Out of the Crisis. MIT Center for Advanced Engineering Study. (Plan, do, study, act: a measured cycle instead of a one-off fix.)", "Deming, W. E. (1986). Out of the Crisis. MIT Center for Advanced Engineering Study. (Plan, Do, Study, Act: ein gemessener Zyklus statt einer einmaligen Korrektur.)") },
+});
+
+export const refFull = (key: RefKey) => REFERENCES[key].full;
+
+/** Print order of the accordion. */
+export const REFERENCE_ORDER: RefKey[] = Object.keys(REFERENCES) as RefKey[];
