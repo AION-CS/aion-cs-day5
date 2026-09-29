@@ -3,6 +3,7 @@
 import { Bul, Diagram } from "@/components/materi/kit";
 import { ArchExample, NineBox, RegretTable, SalesModelCost, TailorGridExample } from "@/components/materi/diagramsB";
 import { Callout, DataTable, MaterialCard } from "@/components/ui/MaterialCard";
+import { ShowMore } from "@/components/ui/ShowMore";
 import { COST_SHARE_MAX, LEVEL_COST, MODEL_IDS, SALES_MODELS, TAILOR_SHARE_MAX } from "@/data/route2";
 import { euro, tt } from "@/lib/lang";
 
@@ -37,6 +38,7 @@ export function CardB1() {
       <Diagram label={tt("Attractiveness against ability to win · a worked example on Nordhafen IT", "Attraktivität gegen Gewinnfähigkeit · ein Beispiel mit Nordhafen IT")} caption={tt("Click a segment to read its profit pool, its win rate and the role they give. Switch the role zones off to see the bare positions.", "Klicken Sie ein Segment an, um Profit Pool, Win Rate und die daraus folgende Rolle zu lesen. Schalten Sie die Rollenzonen aus, um nur die Positionen zu sehen.")}>
         <NineBox />
       </Diagram>
+      <ShowMore id="B1" part="table" label={tt("Show the six prioritisation criteria", "Die sechs Priorisierungskriterien zeigen")}>
       <DataTable
         head={[tt("Criterion", "Kriterium"), tt("Axis", "Achse"), tt("What it tells you", "Was es sagt"), tt("Its blind spot", "Sein blinder Fleck")]}
         rows={[
@@ -49,6 +51,7 @@ export function CardB1() {
         ]}
         caption={tt("Six prioritisation criteria", "Sechs Priorisierungskriterien")}
       />
+      </ShowMore>
     </MaterialCard>
   );
 }
@@ -114,6 +117,7 @@ export function CardB3() {
       <Diagram label={tt("One segment's offer, element by element · a worked example on Nordhafen IT", "Das Angebot eines Segments, Element für Element · ein Beispiel mit Nordhafen IT")} caption={tt("Click a level to cycle through standard, modular and individual, and switch the segment. The bar compares the tailoring cost with what the margin can carry.", "Klicken Sie auf eine Stufe, um zwischen Standard, modular und individuell zu wechseln, und wechseln Sie das Segment. Der Balken vergleicht die Zuschnittkosten mit dem, was die Marge tragen kann.")}>
         <TailorGridExample />
       </Diagram>
+      <ShowMore id="B3" part="extra" label={tt("Show: efficiency and individuality, the coaching question", "Zeigen: Effizienz und Individualität, die Coaching-Frage")}>
       <Callout label={tt("Efficiency and individuality: the coaching question", "Effizienz und Individualität: die Coaching-Frage")} tone="amber">
         <p>
           {tt(
@@ -122,6 +126,7 @@ export function CardB3() {
           )}
         </p>
       </Callout>
+      </ShowMore>
     </MaterialCard>
   );
 }

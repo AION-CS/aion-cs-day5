@@ -2,7 +2,7 @@
 
 import { useId, useState } from "react";
 import clsx from "clsx";
-import { Diagram, Insight, Toggles } from "@/components/materi/kit";
+import { Diagram, Insight, Story, Toggles } from "@/components/materi/kit";
 import { SEGMENTS } from "@/data/segments";
 import type { SegmentId } from "@/data/segments";
 import { CRIT_LABEL } from "@/data/criteria";
@@ -346,18 +346,77 @@ export function CritSortExample() {
 /* ------------------------------------------------------------------ A4 · effort against benefit */
 
 type WSeg = "clinics" | "retail";
+type Focus = "profit" | "cost" | "net" | null;
+
 export function EffortBenefit() {
   const uid = useId().replace(/:/g, "");
   const [seg, setSeg] = useState<WSeg>("clinics");
   const [uplift, setUplift] = useState<number | null>(null);
+  /** null = the learner explores alone; a number = the guided walk-through is on that step (CLAUDE.md #36). */
+  const [story, setStory] = useState<number | null>(null);
   const base = WESER[seg];
   const up = uplift ?? base.tailored - base.standard;
-  const s: SegmentCalc = { ...base, tailored: base.standard + up };
-  const extra = extraProfit(s, WESER.margin);
-  const net = extra - WESER.cost;
-  const breakEvenUp = (WESER.cost / (base.proposals * base.acv * (WESER.margin / 100))) * 100;
+  const calc = (sg: WSeg, points: number) => {
+    const b = WESER[sg];
+    const extra = extraProfit({ ...b, tailored: b.standard + points }, WESER.margin);
+    return { extra, net: extra - WESER.cost, deals: (b.proposals * points) / 100, breakEven: (WESER.cost / (b.proposals * b.acv * (WESER.margin / 100))) * 100 };
+  };
+  const now = calc(seg, up);
+  const extra = now.extra;
+  const net = now.net;
+  const breakEvenUp = now.breakEven;
   const max = 40000;
   const X = (v: number) => 150 + (Math.max(0, v) / max) * 380;
+
+  // The guided walk-through: each step sets the same two controls the learner can press, and moves the spotlight in the picture.
+  const cl = WESER.clinics;
+  const rt = WESER.retail;
+  const c2 = calc("clinics", 2);
+  const c10 = calc("clinics", 10);
+  const r10 = calc("retail", 10);
+  const steps: { seg: WSeg; up: number; focus: Focus; title: string; say: string; look: string }[] = [
+    {
+      seg: "clinics",
+      up: 2,
+      focus: "profit",
+      title: tt("A small lift does not pay", "Ein kleiner Anstieg lohnt sich nicht"),
+      say: tt(
+        `Weserdata sells cloud hosting to clinics: about ${cl.proposals} offers a year, ${euro(cl.acv)} for each signed contract. Tailoring its approach costs ${euro(WESER.cost)} every year (the striped bar). If tailoring wins just 2 more deals in every 100 offers, that is ${num(c2.deals, { maximumFractionDigits: 1 })} extra deals and only ${euro(c2.extra)} of extra profit (the dark bar). Weserdata would lose ${euro(-c2.net)}.`,
+        `Weserdata verkauft Cloud-Hosting an Kliniken: etwa ${cl.proposals} Angebote im Jahr, ${euro(cl.acv)} pro unterschriebenem Vertrag. Der Zuschnitt seines Ansatzes kostet jedes Jahr ${euro(WESER.cost)} (der schraffierte Balken). Wenn der Zuschnitt nur 2 Abschlüsse mehr pro 100 Angebote bringt, sind das ${num(c2.deals, { maximumFractionDigits: 1 })} zusätzliche Abschlüsse und nur ${euro(c2.extra)} Zusatzgewinn (der dunkle Balken). Weserdata würde ${euro(-c2.net)} verlieren.`,
+      ),
+      look: tt("the dark bar is far shorter than the striped bar.", "auf den dunklen Balken: Er ist viel kürzer als der schraffierte."),
+    },
+    {
+      seg: "clinics",
+      up: 10,
+      focus: "net",
+      title: tt("A bigger lift pays, just", "Ein größerer Anstieg lohnt sich, knapp"),
+      say: tt(
+        `Now 10 more deals in every 100 offers: ${num(c10.deals, { maximumFractionDigits: 1 })} extra deals and ${euro(c10.extra)} of extra profit. The dark bar passes the dashed line, so after paying ${euro(WESER.cost)} Weserdata keeps ${euro(c10.net)}. Below about ${num(c10.breakEven, { maximumFractionDigits: 1 })} points it loses money. That point is called break-even.`,
+        `Jetzt 10 Abschlüsse mehr pro 100 Angebote: ${num(c10.deals, { maximumFractionDigits: 1 })} zusätzliche Abschlüsse und ${euro(c10.extra)} Zusatzgewinn. Der dunkle Balken überschreitet die gestrichelte Linie, nach ${euro(WESER.cost)} Kosten behält Weserdata also ${euro(c10.net)}. Unter etwa ${num(c10.breakEven, { maximumFractionDigits: 1 })} Punkten verliert es Geld. Dieser Punkt heißt Break-even.`,
+      ),
+      look: tt("the dark bar crosses the dashed line; the teal line at the bottom says “pays”.", "auf den dunklen Balken: Er überschreitet die gestrichelte Linie; die türkisfarbene Zeile unten sagt „lohnt sich“."),
+    },
+    {
+      seg: "retail",
+      up: 10,
+      focus: "net",
+      title: tt("Same lift, small contracts", "Gleicher Anstieg, kleine Verträge"),
+      say: tt(
+        `Weserdata's retail segment has ${rt.proposals} offers a year, but each contract is only ${euro(rt.acv)}. The same 10-point lift earns ${euro(r10.extra)}, which is ${euro(-r10.net)} less than the cost. Take-away: tailoring pays where each contract is big; where contracts are small, a good standard offer is usually better. In the task you run this check on DataCloud's numbers. Now try the buttons yourself.`,
+        `Das Handelssegment von Weserdata hat ${rt.proposals} Angebote im Jahr, aber jeder Vertrag ist nur ${euro(rt.acv)} wert. Derselbe Anstieg um 10 Punkte bringt ${euro(r10.extra)}, das sind ${euro(-r10.net)} weniger als die Kosten. Merksatz: Der Zuschnitt lohnt sich dort, wo jeder Vertrag groß ist; bei kleinen Verträgen ist ein gutes Standardangebot meist besser. In der Aufgabe führen Sie diese Prüfung mit den Zahlen von DataCloud durch. Probieren Sie jetzt die Schaltflächen selbst aus.`,
+      ),
+      look: tt("the dark bar ends before the dashed line again, although the lift is the same.", "auf den dunklen Balken: Er endet wieder vor der gestrichelten Linie, obwohl der Anstieg derselbe ist."),
+    },
+  ];
+  const goStep = (i: number | null) => {
+    setStory(i);
+    if (i === null) return;
+    setSeg(steps[i].seg);
+    setUplift(steps[i].up);
+  };
+  const focus: Focus = story === null ? null : steps[story].focus;
+  const ring = (y: number, h: number) => <rect x="2" y={y} width="556" height={h} rx="6" fill="none" stroke={C.gold} strokeWidth="2.5" strokeDasharray="6 4" className="anim-pulse" />;
   return (
     <div className="space-y-3">
       <svg viewBox="0 0 560 170" className="mx-auto h-auto w-full max-w-[600px]" role="img" aria-labelledby={`${uid}-t ${uid}-d`}>
@@ -369,6 +428,9 @@ export function EffortBenefit() {
             <line x1="0" y1="0" x2="0" y2="8" stroke={C.amber} strokeWidth="3" />
           </pattern>
         </defs>
+        {focus === "profit" && ring(16, 46)}
+        {focus === "cost" && ring(72, 46)}
+        {focus === "net" && ring(130, 38)}
         <text x="4" y="42" fontSize="13" fontWeight="700" fill={C.ink}>{tt("Extra gross profit", "Zusatz-Rohertrag")}</text>
         <rect x="150" y="24" width={Math.max(X(extra) - 150, 1)} height="30" fill={C.data} stroke={C.ink} className="anim-grow-x" />
         <text x={X(extra) + 6} y="44" fontSize="13" fontWeight="700" fill={C.ink}>{euro(extra)}</text>
@@ -379,6 +441,11 @@ export function EffortBenefit() {
         <text x="150" y="146" fontSize="13" fontWeight="700" fill={net >= 0 ? C.teal : C.rust}>{tt(`Net per year: ${euroSigned(net)} ${net >= 0 ? "(pays)" : "(does not pay)"}`, `Netto pro Jahr: ${euroSigned(net)} ${net >= 0 ? "(lohnt sich)" : "(lohnt sich nicht)"}`)}</text>
         <text x="150" y="164" fontSize="11.5" fill={C.ash}>{tt("solid = extra gross profit · hatched = cost of tailoring · dashed = break-even", "voll = Zusatz-Rohertrag · schraffiert = Kosten des Zuschnitts · gestrichelt = Break-even")}</text>
       </svg>
+      <Story
+        step={story}
+        onStep={goStep}
+        steps={steps.map((s) => ({ title: s.title, say: s.say, look: s.look }))}
+      />
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="space-y-1.5">
           <p className="smallcaps">{tt("Weserdata segment", "Segment von Weserdata")}</p>
@@ -386,6 +453,7 @@ export function EffortBenefit() {
             label={tt("Segment", "Segment")}
             value={seg}
             onChange={(v) => {
+              setStory(null);
               setSeg(v);
               setUplift(null);
             }}
@@ -397,13 +465,22 @@ export function EffortBenefit() {
         </div>
         <div className="space-y-1.5">
           <p className="smallcaps">{tt("Rise in win rate from tailoring (points)", "Anstieg der Win Rate durch Zuschnitt (Punkte)")}</p>
-          <Toggles<string> label={tt("Uplift", "Anstieg")} value={String(up)} onChange={(v) => setUplift(Number(v))} options={[2, 3, 5, 10].map((v) => ({ id: String(v), label: `+${v}` }))} />
+          <Toggles<string>
+            label={tt("Uplift", "Anstieg")}
+            value={String(up)}
+            onChange={(v) => {
+              setStory(null);
+              setUplift(Number(v));
+            }}
+            options={[2, 3, 5, 10].map((v) => ({ id: String(v), label: `+${v}` }))}
+          />
+          <p className="text-micro normal-case tracking-normal text-ash">{tt("“+5” means 5 more signed deals in every 100 offers.", "„+5“ heißt: 5 unterschriebene Abschlüsse mehr pro 100 Angebote.")}</p>
         </div>
       </div>
       <Insight>
         {tt(
-          `${seg === "clinics" ? "Clinics" : "Retail"}: ${base.proposals} proposals × ${up} points × ${euro(base.acv)} × ${WESER.margin}% margin = ${euro(extra)} a year, against ${euro(WESER.cost)} of cost: ${euroSigned(net)}. It breaks even at about ${num(breakEvenUp, { maximumFractionDigits: 1 })} points. ${seg === "clinics" ? "Few proposals, but each contract is large, so a moderate rise already pays." : "Many proposals, but each contract is small, so tailoring pays only if the win rate jumps; a good standard offer is usually the better answer."}`,
-          `${seg === "clinics" ? "Kliniken" : "Handel"}: ${base.proposals} Angebote × ${up} Punkte × ${euro(base.acv)} × ${WESER.margin} % Marge = ${euro(extra)} pro Jahr, bei ${euro(WESER.cost)} Kosten: ${euroSigned(net)}. Break-even bei etwa ${num(breakEvenUp, { maximumFractionDigits: 1 })} Punkten. ${seg === "clinics" ? "Wenige Angebote, aber jeder Vertrag ist groß, also lohnt sich schon ein mäßiger Anstieg." : "Viele Angebote, aber jeder Vertrag ist klein, also lohnt sich Zuschnitt nur, wenn die Win Rate springt; ein gutes Standardangebot ist meist die bessere Antwort."}`,
+          `In plain words: ${seg === "clinics" ? "clinics" : "retail"} get ${num(now.deals, { maximumFractionDigits: 1 })} extra deals a year at a ${up}-point lift. They bring in ${euro(extra)} of profit and tailoring costs ${euro(WESER.cost)}, so Weserdata ${net >= 0 ? `keeps ${euro(net)}` : `loses ${euro(-net)}`}. It breaks even at about ${num(breakEvenUp, { maximumFractionDigits: 1 })} points. ${seg === "clinics" ? "Few offers, but each contract is large, so a moderate lift already pays." : "Many offers, but each contract is small, so tailoring pays only if the win rate jumps; a good standard offer is usually the better answer."}`,
+          `In einfachen Worten: ${seg === "clinics" ? "Kliniken" : "Handel"} bringen bei einem Anstieg um ${up} Punkte ${num(now.deals, { maximumFractionDigits: 1 })} zusätzliche Abschlüsse pro Jahr. Sie bringen ${euro(extra)} Gewinn, und der Zuschnitt kostet ${euro(WESER.cost)}, also ${net >= 0 ? `behält Weserdata ${euro(net)}` : `verliert Weserdata ${euro(-net)}`}. Break-even liegt bei etwa ${num(breakEvenUp, { maximumFractionDigits: 1 })} Punkten. ${seg === "clinics" ? "Wenige Angebote, aber jeder Vertrag ist groß, also lohnt sich schon ein mäßiger Anstieg." : "Viele Angebote, aber jeder Vertrag ist klein, also lohnt sich Zuschnitt nur, wenn die Win Rate springt; ein gutes Standardangebot ist meist die bessere Antwort."}`,
         )}
       </Insight>
       <p className="text-caption text-ash">

@@ -2,6 +2,7 @@
 
 import { CARDS_A } from "@/components/materi/CardsA";
 import { CARDS_B } from "@/components/materi/CardsB";
+import { useCardMore } from "@/store/useCardMore";
 import { OptionalSection } from "@/components/ui/OptionalSection";
 import { ReferencesAccordion } from "@/components/ui/ReferencesAccordion";
 import { MATERIALS, SECTIONS, materialAnchorId } from "@/data/materialIndex";
@@ -17,11 +18,16 @@ const REFS_A: RefKey[] = ["smith1956", "wind1978", "dickson1987", "kotler2022", 
 const REFS_B: RefKey[] = ["coyne2008", "porter1980", "zoltners2004", "kaplan2004", "pine1993", "gilmore1997", "courtney1997", "hubbard2014", "klein2007", "doran1981", "deming1986"];
 
 function Block({ id, title, intro, children }: { id: string; title: string; intro: string; children: React.ReactNode }) {
+  const all = useCardMore((s) => s.all);
+  const setAll = useCardMore((s) => s.setAll);
   return (
     <section id={id} aria-labelledby={`${id}-h`} className="space-y-4">
       <header className="space-y-1">
         <p className="smallcaps text-accent">{title}</p>
         <h2 id={`${id}-h`}>{intro}</h2>
+        <button type="button" aria-pressed={all} onClick={() => setAll(!all)} className="btn-ghost btn-sm">
+          {all ? tt("Hide the extra explanations", "Zusatzerklärungen ausblenden") : tt("Show every extra explanation, video and rule", "Alle Zusatzerklärungen, Videos und Regeln zeigen")}
+        </button>
       </header>
       {children}
     </section>

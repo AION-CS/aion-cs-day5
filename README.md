@@ -120,6 +120,17 @@ a worked answer (with arithmetic) under every other question, in rust, never exp
     it belongs in (`keyPhrases`; a script check proves every phrase is an exact substring of its text in both languages).
 12. **Calculation help.** Block 1.2 already had "Show where the numbers are", "Show the formula" and the calculator with per-part clues;
     Block 2.3 gained a hidden "Show the formula" per measure for economic viability (cost per account, from Materi A7).
+13. **Guided story and videos (CLAUDE.md #36, 2026-09-29).** "Effort against benefit" (A4) is the first diagram with a "Walk me through it"
+    story (`Story` in `components/materi/kit.tsx`, three steps, two presses of Next, that drive the real controls and move a spotlight ring; numbers computed from
+    the same constants). The other eleven interactive diagrams of Day 5 do not have a story yet. Two videos are embedded through
+    `data/videos.ts` and `Watch`: A4 (McKinsey & Company, 2 min, counted in the card) and A3 (Tony Seba, Stanford lecture, 39 min, optional).
+    Both were checked for uploader, length, embeddability and captions on 2026-09-29 but **not watched through**: preview before teaching.
+    No video met the bar for Materi B.
+14. **Less text by default (CLAUDE.md #37, 2026-09-29).** Each card shows the scan line, "In plain words", the picture and the body a task reads.
+    The decision rules, "why it matters / how to read the picture", the video and side notes (A1 what buyers expect, A4 German law and
+    the worked calculation, A6 small numbers, B3 coaching question) sit behind "＋ Show …" rows (`ShowMore`, `useCardMore`). "Draws on"
+    chips in the tasks open the rules and worked calculation of the card first; one button per Materi block shows everything. Only these
+    cards were curated so far; the other side notes and tables of Day 5 remain visible and need a per-card decision.
 
 ## Coverage: where each task block is taught
 

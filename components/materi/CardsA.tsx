@@ -3,6 +3,7 @@
 import { Bul, Diagram } from "@/components/materi/kit";
 import { AssignExample, CritSortExample, EffortBenefit, FitGap, NestedRings, ScoreExample, SegmentLadder, ValueExample } from "@/components/materi/diagramsA";
 import { Callout, DataTable, MaterialCard } from "@/components/ui/MaterialCard";
+import { ShowMore } from "@/components/ui/ShowMore";
 import { CRIT_TESTS } from "@/data/criteria";
 import { EV_RULE } from "@/data/measures";
 import { SEGMENTS, SEGMENT_IDS, SEGMENT_PAIR_TESTS } from "@/data/segments";
@@ -38,6 +39,7 @@ export function CardA1() {
       <Diagram label={tt("One offer, industry offers or need-based offers · a worked example on Weserdata", "Ein Angebot, Branchenangebote oder bedarfsbasierte Angebote · ein Beispiel mit Weserdata")} caption={tt("Each circle is one customer of Weserdata, placed by how much proof and how much control it needs. Switch the offer design and read the average gap.", "Jeder Kreis ist ein Kunde von Weserdata, platziert danach, wie viel Nachweis und wie viel Kontrolle er braucht. Wechseln Sie das Angebotsdesign und lesen Sie die durchschnittliche Lücke.")}>
         <FitGap />
       </Diagram>
+      <ShowMore id="A1" part="table" label={tt("Show the five tests of a useful segment", "Die fünf Tests für ein nützliches Segment zeigen")}>
       <DataTable
         head={[tt("Test", "Test"), tt("The question", "Die Frage"), tt("A group that fails it", "Eine Gruppe, die durchfällt")]}
         rows={[
@@ -49,6 +51,8 @@ export function CardA1() {
         ]}
         caption={tt("Five tests of a useful segment", "Fünf Tests für ein nützliches Segment")}
       />
+      </ShowMore>
+      <ShowMore id="A1" part="extra" label={tt("Show: what buyers expect", "Zeigen: was Käufer erwarten")}>
       <Callout label={tt("What buyers expect", "Was Käufer erwarten")} tone="signal">
         <p>
           {tt(
@@ -57,6 +61,7 @@ export function CardA1() {
           )}
         </p>
       </Callout>
+      </ShowMore>
     </MaterialCard>
   );
 }
@@ -86,6 +91,7 @@ export function CardA2() {
       <Diagram label={tt("From market to offer · a worked example on Weserdata", "Vom Markt zum Angebot · ein Beispiel mit Weserdata")} caption={tt("Follow one of Weserdata's three segments and read each level. The dashed levels are strategic; the teal ones are operational.", "Folgen Sie einem der drei Segmente von Weserdata und lesen Sie jede Ebene. Die gestrichelten Ebenen sind strategisch, die türkisen operativ.")}>
         <SegmentLadder />
       </Diagram>
+      <ShowMore id="A2" part="table" label={tt("Show the table: target group against segment", "Die Tabelle zeigen: Zielgruppe gegen Segment")}>
       <DataTable
         head={["", tt("Target group", "Zielgruppe"), tt("Segment", "Segment")]}
         rows={[
@@ -97,6 +103,7 @@ export function CardA2() {
         ]}
         caption={tt("Target group against segment", "Zielgruppe gegen Segment")}
       />
+      </ShowMore>
     </MaterialCard>
   );
 }
@@ -161,6 +168,7 @@ export function CardA4() {
       ]}
       sources={["mckinsey2021", "burgess2021", "gdpr", "uwg7", "tdddg25"]}
     >
+      <ShowMore id="A4" part="table" label={tt("Show the table: how far to personalise", "Die Tabelle zeigen: wie weit man personalisiert")}>
       <DataTable
         head={[tt("Level", "Stufe"), tt("What is tailored", "Was zugeschnitten wird"), tt("Cost per account", "Kosten pro Account"), tt("When it fits", "Wann es passt")]}
         rows={[
@@ -171,9 +179,11 @@ export function CardA4() {
         ]}
         caption={tt("How far to personalise", "Wie weit man personalisiert")}
       />
+      </ShowMore>
       <Diagram label={tt("Effort against benefit · a worked example on Weserdata", "Aufwand gegen Nutzen · ein Beispiel mit Weserdata")} caption={tt("Choose a segment and a rise in win rate. The bar compares the extra gross profit with the yearly cost of tailoring.", "Wählen Sie ein Segment und einen Anstieg der Win Rate. Der Balken vergleicht den zusätzlichen Rohertrag mit den jährlichen Kosten des Zuschnitts.")}>
         <EffortBenefit />
       </Diagram>
+      <ShowMore id="A4" part="calc" label={tt("Show the worked calculation, step by step", "Die Beispielrechnung Schritt für Schritt zeigen")}>
       <DataTable
         head={[tt("Step", "Schritt"), tt("Calculation for Weserdata's clinics (Case assumption)", "Rechnung für die Kliniken von Weserdata (Fallannahme)"), tt("Result", "Ergebnis")]}
         rows={[
@@ -185,6 +195,8 @@ export function CardA4() {
         ]}
         caption={tt("The same method as the task, on different numbers", "Dieselbe Methode wie in der Aufgabe, mit anderen Zahlen")}
       />
+      </ShowMore>
+      <ShowMore id="A4" part="extra" label={tt("Show: Personalisation and German law, three tests", "Zeigen: Personalisierung und deutsches Recht, drei Tests")}>
       <Callout label={tt("Personalisation and German law: three tests before any campaign", "Personalisierung und deutsches Recht: drei Tests vor jeder Kampagne")} tone="rust">
         <ol className="list-decimal space-y-1 pl-5">
           <li>{tt("Data minimisation (GDPR Art. 5): use only the data the offer really needs. A need stated in a meeting is enough; a profile of every click is not.", "Datenminimierung (Art. 5 DSGVO): nur die Daten nutzen, die das Angebot wirklich braucht. Ein im Termin genannter Bedarf reicht; ein Profil aus jedem Klick nicht.")}</li>
@@ -192,6 +204,7 @@ export function CardA4() {
           <li>{tt("Advertising emails generally need prior express consent, also between businesses (§ 7 UWG); anyone may object to direct marketing at any time (GDPR Art. 21).", "Werbe-E-Mails brauchen grundsätzlich eine vorherige ausdrückliche Einwilligung, auch zwischen Unternehmen (§ 7 UWG); jeder kann der Direktwerbung jederzeit widersprechen (Art. 21 DSGVO).")}</li>
         </ol>
       </Callout>
+      </ShowMore>
     </MaterialCard>
   );
 }
@@ -291,9 +304,11 @@ export function CardA6() {
           ]}
         />
       </div>
+      <ShowMore id="A6" part="extra" label={tt("Show: small numbers", "Zeigen: kleine Zahlen")}>
       <Callout label={tt("Small numbers", "Kleine Zahlen")} tone="rust">
         <p>{tt("Twelve accounts are a pattern to act on, not a statistic to quote. Say “in the twelve accounts”, not “the market”.", "Zwölf Accounts sind ein Muster zum Handeln, keine Statistik zum Zitieren. Sagen Sie „in den zwölf Accounts“, nicht „der Markt“.")}</p>
       </Callout>
+      </ShowMore>
     </MaterialCard>
   );
 }
