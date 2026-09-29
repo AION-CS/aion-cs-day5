@@ -369,44 +369,63 @@ export function EffortBenefit() {
   const X = (v: number) => 150 + (Math.max(0, v) / max) * 380;
 
   // The guided walk-through: each step sets the same two controls the learner can press, and moves the spotlight in the picture.
-  const cl = WESER.clinics;
-  const rt = WESER.retail;
   const c2 = calc("clinics", 2);
   const c10 = calc("clinics", 10);
-  const r10 = calc("retail", 10);
   const steps: { seg: WSeg; up: number; focus: Focus; title: string; say: string; look: string }[] = [
     {
       seg: "clinics",
       up: 2,
-      focus: "profit",
-      title: tt("A small lift does not pay", "Ein kleiner Anstieg lohnt sich nicht"),
+      focus: null,
+      title: tt("The example company", "Das Beispielunternehmen"),
       say: tt(
-        `Weserdata sells cloud hosting to clinics: about ${cl.proposals} offers a year, ${euro(cl.acv)} for each signed contract. Tailoring its approach costs ${euro(WESER.cost)} every year (the striped bar). If tailoring wins just 2 more deals in every 100 offers, that is ${num(c2.deals, { maximumFractionDigits: 1 })} extra deals and only ${euro(c2.extra)} of extra profit (the dark bar). Weserdata would lose ${euro(-c2.net)}.`,
-        `Weserdata verkauft Cloud-Hosting an Kliniken: etwa ${cl.proposals} Angebote im Jahr, ${euro(cl.acv)} pro unterschriebenem Vertrag. Der Zuschnitt seines Ansatzes kostet jedes Jahr ${euro(WESER.cost)} (der schraffierte Balken). Wenn der Zuschnitt nur 2 Abschlüsse mehr pro 100 Angebote bringt, sind das ${num(c2.deals, { maximumFractionDigits: 1 })} zusätzliche Abschlüsse und nur ${euro(c2.extra)} Zusatzgewinn (der dunkle Balken). Weserdata würde ${euro(-c2.net)} verlieren.`,
+        "Meet Weserdata, an example company that rents out cloud servers to businesses. It is not DataCloud from your task; it only shows the method. Today Weserdata sends every customer the same offer.",
+        "Lernen Sie Weserdata kennen, ein Beispielunternehmen, das Cloud-Server an Unternehmen vermietet. Es ist nicht DataCloud aus Ihrer Aufgabe; es zeigt nur die Methode. Heute schickt Weserdata jedem Kunden dasselbe Angebot.",
       ),
-      look: tt("the dark bar is far shorter than the striped bar.", "auf den dunklen Balken: Er ist viel kürzer als der schraffierte."),
+      look: tt("below, the picture shows the money side of this example.", "unten zeigt das Bild die Geldseite dieses Beispiels."),
+    },
+    {
+      seg: "clinics",
+      up: 2,
+      focus: null,
+      title: tt("The idea", "Die Idee"),
+      say: tt(
+        "One offer for everyone is like clothes that only come in one size. Personalising (also called tailoring) means making an offer that fits one group, like a tailor sewing a suit to your size.",
+        "Ein Angebot für alle ist wie Kleidung, die es nur in einer Größe gibt. Personalisieren (auch Zuschnitt genannt) heißt, ein Angebot zu machen, das zu einer Gruppe passt, wie ein Schneider, der einen Anzug nach Maß näht.",
+      ),
+      look: tt("nothing to look at yet: the next step adds the price.", "noch nichts zu sehen: der nächste Schritt fügt den Preis hinzu."),
+    },
+    {
+      seg: "clinics",
+      up: 2,
+      focus: "cost",
+      title: tt("The price", "Der Preis"),
+      say: tt(
+        `Weserdata wants to do this for clinics. It costs ${euro(WESER.cost)} every year. It is worth it only if it earns back more than that.`,
+        `Weserdata will das für Kliniken tun. Es kostet jedes Jahr ${euro(WESER.cost)}. Es lohnt sich nur, wenn es mehr als das einbringt.`,
+      ),
+      look: tt("the striped bar is the cost.", "der schraffierte Balken sind die Kosten."),
+    },
+    {
+      seg: "clinics",
+      up: 2,
+      focus: "profit",
+      title: tt("A small gain: not worth it", "Ein kleiner Gewinn: lohnt sich nicht"),
+      say: tt(
+        `Say the special offer wins just 2 more deals out of every 100 offers. That earns only ${euro(c2.extra)}. It is less than ${euro(WESER.cost)}, so Weserdata loses money.`,
+        `Sagen wir, das besondere Angebot gewinnt nur 2 Abschlüsse mehr von 100 Angeboten. Das bringt nur ${euro(c2.extra)}. Das ist weniger als ${euro(WESER.cost)}, also verliert Weserdata Geld.`,
+      ),
+      look: tt("the dark bar is what it earns, and it is short.", "der dunkle Balken zeigt, was es einbringt, und er ist kurz."),
     },
     {
       seg: "clinics",
       up: 10,
       focus: "net",
-      title: tt("A bigger lift pays, just", "Ein größerer Anstieg lohnt sich, knapp"),
+      title: tt("A big gain: worth it", "Ein großer Gewinn: lohnt sich"),
       say: tt(
-        `Now 10 more deals in every 100 offers: ${num(c10.deals, { maximumFractionDigits: 1 })} extra deals and ${euro(c10.extra)} of extra profit. The dark bar passes the dashed line, so after paying ${euro(WESER.cost)} Weserdata keeps ${euro(c10.net)}. Below about ${num(c10.breakEven, { maximumFractionDigits: 1 })} points it loses money. That point is called break-even.`,
-        `Jetzt 10 Abschlüsse mehr pro 100 Angebote: ${num(c10.deals, { maximumFractionDigits: 1 })} zusätzliche Abschlüsse und ${euro(c10.extra)} Zusatzgewinn. Der dunkle Balken überschreitet die gestrichelte Linie, nach ${euro(WESER.cost)} Kosten behält Weserdata also ${euro(c10.net)}. Unter etwa ${num(c10.breakEven, { maximumFractionDigits: 1 })} Punkten verliert es Geld. Dieser Punkt heißt Break-even.`,
+        `With 10 more deals out of every 100 it earns ${euro(c10.extra)}. That beats ${euro(WESER.cost)}, so Weserdata keeps ${euro(c10.net)}. Tap “Retail” below to see when it does not pay.`,
+        `Mit 10 Abschlüssen mehr von 100 bringt es ${euro(c10.extra)}. Das übertrifft ${euro(WESER.cost)}, also behält Weserdata ${euro(c10.net)}. Tippen Sie unten auf „Handel“, um zu sehen, wann es sich nicht lohnt.`,
       ),
-      look: tt("the dark bar crosses the dashed line; the teal line at the bottom says “pays”.", "auf den dunklen Balken: Er überschreitet die gestrichelte Linie; die türkisfarbene Zeile unten sagt „lohnt sich“."),
-    },
-    {
-      seg: "retail",
-      up: 10,
-      focus: "net",
-      title: tt("Same lift, small contracts", "Gleicher Anstieg, kleine Verträge"),
-      say: tt(
-        `Weserdata's retail segment has ${rt.proposals} offers a year, but each contract is only ${euro(rt.acv)}. The same 10-point lift earns ${euro(r10.extra)}, which is ${euro(-r10.net)} less than the cost. Take-away: tailoring pays where each contract is big; where contracts are small, a good standard offer is usually better. In the task you run this check on DataCloud's numbers. Now try the buttons yourself.`,
-        `Das Handelssegment von Weserdata hat ${rt.proposals} Angebote im Jahr, aber jeder Vertrag ist nur ${euro(rt.acv)} wert. Derselbe Anstieg um 10 Punkte bringt ${euro(r10.extra)}, das sind ${euro(-r10.net)} weniger als die Kosten. Merksatz: Der Zuschnitt lohnt sich dort, wo jeder Vertrag groß ist; bei kleinen Verträgen ist ein gutes Standardangebot meist besser. In der Aufgabe führen Sie diese Prüfung mit den Zahlen von DataCloud durch. Probieren Sie jetzt die Schaltflächen selbst aus.`,
-      ),
-      look: tt("the dark bar ends before the dashed line again, although the lift is the same.", "auf den dunklen Balken: Er endet wieder vor der gestrichelten Linie, obwohl der Anstieg derselbe ist."),
+      look: tt("the dark bar passes the dashed line.", "der dunkle Balken überschreitet die gestrichelte Linie."),
     },
   ];
   const goStep = (i: number | null) => {

@@ -146,5 +146,13 @@ for (const l of ["en", "de"]) {
 }
 lang.setCurrentLang("en");
 
+// --- decisions are free (CLAUDE.md #38): an over-budget plan and a second firmographic sketch stay hints, never gaps ---------------
+for (const l of ["en", "de"]) {
+  lang.setCurrentLang(l);
+  const over2 = { ...store.emptyR2(), ...key.KEY_R2(), alloc: Object.fromEntries(r2.ARCH_IDS.map((id) => [id, true])) };
+  ok(`[${l}] funding every item goes over the budget`, checks.archOver(over2) > 0);
+  eq(`[${l}] an over-budget plan adds no missing entry about the budget`, missing.r2Missing({ participant: { name: "X" }, ui: {}, l1: store.emptyL1(), r2: over2 }).filter((m) => /budget|Budget/.test(m.label)), []);
+}
+lang.setCurrentLang("en");
 console.log(failed ? `\n${failed} check(s) FAILED` : "\nAll checks passed.");
 process.exit(failed ? 1 : 0);

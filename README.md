@@ -21,7 +21,7 @@ Systems remains in the tree.
 | Route | Content | Export |
 |---|---|---|
 | `/route-1/` **Levels 1 + 2** | **Materi A**: seven cards, 60 min (A1 why segment at all, A2 target group and segment, A3 firmographic / behaviour / needs criteria and the nested approach, A4 personalisation and effort against benefit, A5 three needs-based segments, A6 segment value and what the data cannot tell, A7 relevance × differentiation × economic viability). **Task 1, Segment Analysis**: *Part 1 · Understand the landscape:* 1.1 sort nine CRM fields, 1.2 is tailoring worth it (F1–F3 and a sentence), 1.3 target group or segment, where accounts differ most, three segment sketches, 1.4 coaching reflection. *Part 2 · Analyse and act:* 2.1 assign twelve accounts to three segments, 2.2 value, need and content per segment, gaps and a risk, 2.3 choose, score and order three measures. | `1-{name}-day5-l1l2-segment-analysis.html` |
-| `/route-2/` **Level 3** | **Materi B**: five cards, 60 min (B1 attractiveness × ability to win, B2 a sales model per segment, B3 standardise or individualise, B4 deciding with incomplete data, B5 architecture). **Task 2, Segment Strategy Memo**, assembling beside the questions: 3.1 prioritisation criteria, 3.2 rate five candidate segments and name the core, 3.3 a sales model and value proposition per segment, 3.4 standard / modular / individual grid, 3.5 the measures architecture, 3.6 the decision, the tripwire and the board's challenge. | `2-{name}-day5-l3-strategy-memo.html` |
+| `/route-2/` **Level 3** | **Materi B**: five cards, 60 min (B1 attractiveness × ability to win, B2 a sales model per segment, B3 standardise or individualise, B4 deciding with incomplete data, B5 architecture). **Task 2, Segment Strategy Memo**, assembling below the questions: 3.1 prioritisation criteria, 3.2 rate five candidate segments and name the core, 3.3 a sales model and value proposition per segment, 3.4 standard / modular / individual grid, 3.5 the measures architecture, 3.6 the decision, the tripwire and the board's challenge. | `2-{name}-day5-l3-strategy-memo.html` |
 
 Minutes: Materi A 60 + Task 1 56 (6 + 10 + 7 + 5 + 8 + 8 + 12), Materi B 60 + Task 2 50 (5 + 9 + 8 + 9 + 10 + 9). All in `lib/routes.ts`.
 
@@ -121,7 +121,7 @@ a worked answer (with arithmetic) under every other question, in rust, never exp
 12. **Calculation help.** Block 1.2 already had "Show where the numbers are", "Show the formula" and the calculator with per-part clues;
     Block 2.3 gained a hidden "Show the formula" per measure for economic viability (cost per account, from Materi A7).
 13. **Guided story and videos (CLAUDE.md #36, 2026-09-29).** "Effort against benefit" (A4) is the first diagram with a "Walk me through it"
-    story (`Story` in `components/materi/kit.tsx`, three steps, two presses of Next, that drive the real controls and move a spotlight ring; numbers computed from
+    story (`Story` in `components/materi/kit.tsx`, four steps (an everyday picture of the idea first) that drive the real controls and move a spotlight ring; numbers computed from
     the same constants). The other eleven interactive diagrams of Day 5 do not have a story yet. Two videos are embedded through
     `data/videos.ts` and `Watch`: A4 (McKinsey & Company, 2 min, counted in the card) and A3 (Tony Seba, Stanford lecture, 39 min, optional).
     Both were checked for uploader, length, embeddability and captions on 2026-09-29 but **not watched through**: preview before teaching.
@@ -131,6 +131,41 @@ a worked answer (with arithmetic) under every other question, in rust, never exp
     the worked calculation, A6 small numbers, B3 coaching question) sit behind "＋ Show …" rows (`ShowMore`, `useCardMore`). "Draws on"
     chips in the tasks open the rules and worked calculation of the card first; one button per Materi block shows everything. Only these
     cards were curated so far; the other side notes and tables of Day 5 remain visible and need a per-card decision.
+15. **Decisions are free (CLAUDE.md #38, 2026-09-29).** Going over the Route 2 budget (Block 3.5) or making a second firmographic-only sketch
+    (Block 1.3) is no longer a missing item and no longer blocks the block's done-state; both stay hints, the memo prints "€X over" as a
+    fact, and every `CheckBar` says a check is a hint. `verify:calc` proves an over-budget plan leaves no budget entry in the missing list.
+
+16. **Live memo at the bottom (CLAUDE.md #39, 2026-09-29).** The memo of Route 2 no longer sits in a right-hand column (or a phone strip);
+    it is a full-width panel below Block 3.6 and above Export, with a "Hide the memo" button. The questions now use the full width.
+17. **Core never depends on Optional (CLAUDE.md #40, 2026-09-29).** The audit found three places where a Core part leaned on an
+    Optional one; all three are fixed (see the checklist below).
+
+## Dependency checklist (CLAUDE.md #40)
+
+✓ = reads only Core blocks, Core cards and the case brief. For Optional items the column says what they read; they may read Core,
+and nothing reads them back.
+
+| Item | Status | Reads from | Core-safe |
+|---|---|---|---|
+| **Route 1** | | | |
+| 1.1 Sort CRM fields | Core | brief, A3 | ✓ |
+| 1.2 Is tailoring worth it (F1–F3) | Core | printed pilot table, A4 | ✓ |
+| 1.3 Target group, sketches | Optional | printed accounts of 2.1, A2, A3, A5 | self-contained |
+| 1.4 Coaching reflection | Optional | own answers 1.1–1.3, A4, A6 | self-contained |
+| 2.1 Assign twelve accounts | Core | printed notes, A5 | ✓ |
+| 2.2 Profiles, value, gaps | Optional | own placement in 2.1 (Core), A5, A6 | self-contained |
+| 2.3 Choose, score, order measures | Core | own placement in 2.1 (Core), A7 | ✓ **fixed**: the Relevance score needed each segment's value, which lived only in 2.2 (Optional) with its rule in A6 (Optional). 2.3 now prints the values from 2.1 with the rule, and A7's rules state the value rule. |
+| **Route 2** | | | |
+| 3.1 Prioritisation criteria | Optional | B1 | self-contained |
+| 3.2 Rate five segments, name core | Core | printed market table, B1 | ✓ |
+| 3.3 Sales model per segment | Optional | own roles in 3.2 (Core), B2 | self-contained |
+| 3.4 Standardise or individualise | Optional | own roles in 3.2 (Core), B3 | self-contained |
+| 3.5 Architecture: fund, sequence, own | Core | own roles in 3.2 (Core), B5 | ✓ **fixed**: item "Compliance evidence pack" was described as "the audit folder from Route 1"; now described on its own. |
+| 3.6 Decision, tripwire, board | Core | own core segments 3.2 and plan 3.5 (Core), B4, printed baselines | ✓ **fixed**: its FIND IT line said "your answers in Blocks 3.1 to 3.5" (3.1, 3.3, 3.4 are Optional); it now names 3.2 and 3.5. |
+| Route 2 brief · "Where Route 1 left off" | — | Route 1 Core 2.1 and 2.3 | ✓ **fixed**: it quoted Route 1's Optional Block 2.2 and jumped there; it now reads values from 2.1 and jumps to 2.3 (the memo quotes the same). |
+| **Cards** | | | |
+| A3, A4, A5, A7 · B1, B4, B5 | Core | each other and the case | ✓ (A7 now carries the value rule itself) |
+| A1, A2, A6 · B2, B3 | Optional | — | no Core block needs them |
 
 ## Coverage: where each task block is taught
 

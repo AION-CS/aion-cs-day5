@@ -579,7 +579,7 @@ export function Block35() {
         <BudgetBar items={f.map((id) => ({ id, short: ARCH_BY_ID[id].name.split(" ")[0], cost: ARCH_BY_ID[id].cost }))} budget={R2_BUDGET} title={tt(`Funded items against the ${euro(R2_BUDGET)} budget`, `Finanzierte Punkte gegen das Budget von ${euro(R2_BUDGET)}`)} />
         <p className="text-caption text-ash" aria-live="polite">
           {tt(`Funded ${euro(archCost(r2))} of ${euro(R2_BUDGET)}. `, `Finanziert ${euro(archCost(r2))} von ${euro(R2_BUDGET)}. `)}
-          {over > 0 ? tt(`${euro(over)} over: leave out the item with the weakest case, do not trim every item a little.`, `${euro(over)} darüber: Lassen Sie den Punkt mit der schwächsten Begründung weg, kürzen Sie nicht jeden ein bisschen.`) : tt(`${euro(archLeft(r2))} left.`, `${euro(archLeft(r2))} übrig.`)}
+          {over > 0 ? tt(`${euro(over)} over. You may keep it if you have a clear reason and say so in your memo; otherwise leave out the item with the weakest case rather than trim every item a little.`, `${euro(over)} darüber. Sie dürfen es behalten, wenn Sie einen klaren Grund haben und ihn im Memo nennen; sonst lassen Sie den Punkt mit der schwächsten Begründung weg, statt jeden ein bisschen zu kürzen.`) : tt(`${euro(archLeft(r2))} left.`, `${euro(archLeft(r2))} übrig.`)}
         </p>
       </div>
       {ARCH.map((a) => {
@@ -650,7 +650,7 @@ export function Block35() {
         {rules.hasBaseline && base != null && firstOther !== null && base > firstOther && <p>{tt(`The first item starts in month ${firstOther}, before the segment fields in month ${base}: its first weeks have no baseline to compare with.`, `Der erste Punkt startet in Monat ${firstOther}, vor den Segmentfeldern in Monat ${base}: Seine ersten Wochen haben keine Baseline zum Vergleich.`)}</p>}
         {rules.hasBaseline && base != null && firstOther !== null && base <= firstOther && <p>{tt(`The segment fields start in month ${base}, no later than the first other item (month ${firstOther}), so the baseline exists before anything changes.`, `Die Segmentfelder starten in Monat ${base}, nicht später als der erste andere Punkt (Monat ${firstOther}), also existiert die Baseline, bevor sich etwas ändert.`)}</p>}
         {dep.length > 0 && <p>{tt(`Funded for a segment you deprioritised: ${dep.map((id) => ARCH_BY_ID[id].name).join(", ")}. That money works against your own segment decision.`, `Finanziert für ein Segment, das Sie zurückgestellt haben: ${dep.map((id) => ARCH_BY_ID[id].name).join(", ")}. Dieses Geld arbeitet gegen Ihre eigene Segmententscheidung.`)}</p>}
-        {over > 0 && <p>{tt(`The funded items are ${euro(over)} over the budget.`, `Die finanzierten Punkte liegen ${euro(over)} über dem Budget.`)}</p>}
+        {over > 0 && <p>{tt(`The funded items are ${euro(over)} over the budget. That is your choice if you can justify it.`, `Die finanzierten Punkte liegen ${euro(over)} über dem Budget. Das ist Ihre Entscheidung, wenn Sie sie begründen können.`)}</p>}
       </div>
 
       {notAllFunded && (
@@ -718,7 +718,7 @@ export function Block36() {
       kind="OBJECTIVE + JUDGED"
       minutes={BLOCK_MINUTES["3.6"]}
       core={true}
-      findIt={tt("Route 2 → Task 2 → your own answers in Blocks 3.1 to 3.5, the baselines below, and the regret table in Materi B4. Answer in the fields below.", "Route 2 → Task 2 → Ihre eigenen Antworten in den Blöcken 3.1 bis 3.5, die Ausgangswerte unten und die Regret-Tabelle in Materi B4. Antworten Sie in den Feldern unten.")}
+      findIt={tt("Route 2 → Task 2 → your core segments from Block 3.2, your plan from Block 3.5, the baselines below, and the regret table in Materi B4. Answer in the fields below.", "Route 2 → Task 2 → Ihre Kernsegmente aus Block 3.2, Ihr Plan aus Block 3.5, die Ausgangswerte unten und die Regret-Tabelle in Materi B4. Antworten Sie in den Feldern unten.")}
     >
       <MaterialRefs refs={["B4"]} />
       <div id={IDS.decision} className={clsx("space-y-2 rounded-lg p-1", r2.decisionFlagged && "is-flagged")}>

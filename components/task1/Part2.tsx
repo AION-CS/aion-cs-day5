@@ -16,7 +16,7 @@ import { RevealHint } from "@/components/ui/RevealHint";
 import { WritingHelp } from "@/components/ui/WritingHelp";
 import { ACCOUNTS, GAPS, STATUS_LABEL } from "@/data/accounts";
 import type { AccountId, GapId } from "@/data/accounts";
-import { CONTENTS, CONTENT_IDS, SEGMENTS, SEGMENT_IDS, SEGMENT_PAIR_TESTS, VALUE_GLYPH, VALUE_LABEL, VALUE_ORDER } from "@/data/segments";
+import { CONTENTS, CONTENT_IDS, SEGMENTS, SEGMENT_IDS, SEGMENT_PAIR_TESTS, VALUE_GLYPH, VALUE_HIGH, VALUE_LABEL, VALUE_MID, VALUE_ORDER } from "@/data/segments";
 import type { ContentId, SegmentId, Value } from "@/data/segments";
 import { BUDGET, CHOOSE, EV_RULE, MEASURES, MEASURE_BY_ID, MONTHS } from "@/data/measures";
 import type { MeasureId } from "@/data/measures";
@@ -340,6 +340,22 @@ export function Block23() {
       )}
     >
       <MaterialRefs refs={["A7"]} />
+      <div className="rounded-lg border border-line bg-canvas p-3 text-caption text-ink">
+        <p className="smallcaps">{tt("Your segments by value · from your placement in Block 2.1", "Ihre Segmente nach Wert · aus Ihrer Zuordnung in Block 2.1")}</p>
+        <ul className="mt-1 grid gap-1 sm:grid-cols-3">
+          {SEGMENT_IDS.map((s) => (
+            <li key={s}>
+              <strong>{SEGMENTS[s].label}</strong>: {euro(tally.acv[s])} → {VALUE_LABEL[ownValue(s, tally)]}
+            </li>
+          ))}
+        </ul>
+        <p className="mt-1 text-ash">
+          {tt(
+            `Value = the potential contract values of the accounts you placed in the segment, added up: ${euro(VALUE_HIGH)} or more High, ${euro(VALUE_MID)} or more Mid, less Low. ${tally.placed} of 12 accounts placed. The Relevance score uses this value.`,
+            `Wert = die potenziellen Vertragswerte der Accounts, die Sie dem Segment zugeordnet haben, addiert: ${euro(VALUE_HIGH)} oder mehr Hoch, ${euro(VALUE_MID)} oder mehr Mittel, weniger Niedrig. ${tally.placed} von 12 Accounts zugeordnet. Der Relevanz-Wert nutzt diesen Wert.`,
+          )}
+        </p>
+      </div>
       <div id={IDS.measurePick} className="space-y-2">
         <p className="text-body text-ink">
           <Gloss>
@@ -481,7 +497,7 @@ export function Block23() {
               </li>
             ))}
           </ul>
-          <p className="text-micro normal-case tracking-normal text-ash">{tt("The value in brackets comes from your own tally in Block 2.2.", "Der Wert in Klammern kommt aus Ihrer eigenen Auszählung in Block 2.2.")}</p>
+          <p className="text-micro normal-case tracking-normal text-ash">{tt("The value in brackets comes from your own placement in Block 2.1.", "Der Wert in Klammern kommt aus Ihrer eigenen Zuordnung in Block 2.1.")}</p>
         </div>
       )}
 

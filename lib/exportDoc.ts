@@ -206,7 +206,9 @@ ${para(l1.why)}
 export function memoBody(p: Persisted): string {
   const { l1, r2 } = p;
   const name = p.participant.name.trim();
-  const rated = SEGMENT_IDS.filter((s) => l1.profiles[s].value).map((s) => `${SEGMENTS[s].label} (${VALUE_LABEL[l1.profiles[s].value!]})`);
+  // From the Core Block 2.1 placement, never the Optional Block 2.2 (CLAUDE.md #40).
+  const tl = tallyOf(l1.assign);
+  const rated = tl.placed > 0 ? SEGMENT_IDS.map((s) => `${SEGMENTS[s].label} (${VALUE_LABEL[ownValue(s, tl)]})`) : [];
   const situation =
     rated.length || l1.chosen.length
       ? `<blockquote><strong>${esc(tt("Where Route 1 left off.", "Wo Route 1 aufgehört hat."))}</strong> ${esc(tt("Segment values:", "Segmentwerte:"))} ${esc(rated.join(", ") || "—")}. ${esc(tt("Measures chosen:", "Gewählte Maßnahmen:"))} ${esc(l1.chosen.map((id) => MEASURE_BY_ID[id].name).join(", ") || "—")}.</blockquote>`
@@ -251,7 +253,7 @@ ${situation}
 ${served.length ? `<table><thead><tr><th>${esc(tt("Element", "Element"))}</th>${gridHead}</tr></thead><tbody>${gridRows}${costRow}</tbody></table>` : `<p class="muted">—</p>`}
 <h2>${esc(tt("6 · The measures architecture", "6 · Die Maßnahmenarchitektur"))}</h2>
 <table><thead><tr><th>${esc(tt("Item", "Punkt"))}</th><th>${esc(tt("Status", "Status"))}</th><th class="num">${esc(tt("Cost", "Kosten"))}</th><th class="num">${esc(tt("Start", "Start"))}</th><th>${esc(tt("Owner", "Owner"))}</th><th>${esc(tt("Trigger", "Trigger"))}</th></tr></thead><tbody>${archRows}</tbody></table>
-<p class="legend">${esc(tt(`Funded ${euro(archCost(r2))} of ${euro(R2_BUDGET)} (${euro(archLeft(r2))} left) across ${fundedIds.length} item${fundedIds.length === 1 ? "" : "s"}.`, `Finanziert ${euro(archCost(r2))} von ${euro(R2_BUDGET)} (${euro(archLeft(r2))} übrig) über ${fundedIds.length} ${fundedIds.length === 1 ? "Punkt" : "Punkte"}.`))}</p>
+<p class="legend">${esc(tt(`Funded ${euro(archCost(r2))} of ${euro(R2_BUDGET)} (${archLeft(r2) < 0 ? `${euro(-archLeft(r2))} over` : `${euro(archLeft(r2))} left`}) across ${fundedIds.length} item${fundedIds.length === 1 ? "" : "s"}.`, `Finanziert ${euro(archCost(r2))} von ${euro(R2_BUDGET)} (${archLeft(r2) < 0 ? `${euro(-archLeft(r2))} darüber` : `${euro(archLeft(r2))} übrig`}) über ${fundedIds.length} ${fundedIds.length === 1 ? "Punkt" : "Punkte"}.`))}</p>
 ${ARCH_IDS.every((id) => r2.alloc[id]) ? "" : `<h3>${esc(tt("Left out, and when we look again", "Weggelassen, und wann wir es wieder ansehen"))}</h3>${para(r2.postponed)}<p><strong>${esc(tt("Pickup point:", "Pickup Point:"))}</strong> ${cell(r2.pickup)}</p>`}
 <h2>${esc(tt("7 · The decision", "7 · Die Entscheidung"))}</h2>
 <p><strong>${d ? esc(d.label) : "—"}</strong>${d ? ` — ${esc(d.detail)}` : ""}</p>

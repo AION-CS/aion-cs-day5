@@ -45,7 +45,6 @@ export function taskBlocks(p: Persisted): Record<TaskBlockId, boolean> {
   const f = funded(r2);
   const archOk =
     f.length > 0 &&
-    archOver(r2) === 0 &&
     f.every((id) => r2.start[id] != null && !!r2.owner[id] && len(r2.trigger[id] ?? "") >= 20 && hasNumber(r2.trigger[id] ?? "")) &&
     (ARCH_IDS.every((id) => r2.alloc[id]) || (len(r2.postponed) >= MIN_LINE && len(r2.pickup) >= 15 && hasNumber(r2.pickup)));
   return {

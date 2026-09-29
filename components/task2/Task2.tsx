@@ -9,6 +9,7 @@ import { MEASURE_BY_ID } from "@/data/measures";
 import { SEGMENTS, SEGMENT_IDS, VALUE_LABEL } from "@/data/segments";
 import { R2_BUDGET, R2_MONTHS } from "@/data/route2";
 import { Gloss } from "@/lib/glossify";
+import { ownValue, tallyOf } from "@/lib/checks";
 import { euro, tt } from "@/lib/lang";
 import { memoBody } from "@/lib/exportDoc";
 import { r2Missing } from "@/lib/missing";
@@ -23,7 +24,10 @@ function CaseBrief() {
   const hydrated = useHydrated();
   const p = usePersisted();
   const jump = useJumpTo();
-  const rated = SEGMENT_IDS.filter((s) => p.l1.profiles[s].value).map((s) => `${SEGMENTS[s].label} (${VALUE_LABEL[p.l1.profiles[s].value!]})`);
+  // Read from Core blocks only (CLAUDE.md #40): the values come from the learner's own placement in Block 2.1, not from the
+  // Optional Block 2.2.
+  const tally = tallyOf(p.l1.assign);
+  const rated = tally.placed > 0 ? SEGMENT_IDS.map((s) => `${SEGMENTS[s].label} (${VALUE_LABEL[ownValue(s, tally)]})`) : [];
   const chosen = p.l1.chosen.map((id) => MEASURE_BY_ID[id].name);
   const has = hydrated && (rated.length > 0 || chosen.length > 0);
   return (
@@ -71,15 +75,15 @@ function CaseBrief() {
         <p className="smallcaps text-accent">{tt("Where Route 1 left off · your own answers", "Wo Route 1 aufgehört hat · Ihre eigenen Antworten")}</p>
         {has ? (
           <p className="mt-1">
-            {tt("Segment values you rated: ", "Von Ihnen bewertete Segmentwerte: ")}
+            {tt("Segment values from your placement in Block 2.1: ", "Segmentwerte aus Ihrer Zuordnung in Block 2.1: ")}
             <strong>{rated.join(", ") || tt("none yet", "noch keine")}</strong>. {tt("Measures you chose: ", "Von Ihnen gewählte Maßnahmen: ")}
             <strong>{chosen.join(", ") || tt("none yet", "noch keine")}</strong>.
           </p>
         ) : (
           <p className="mt-1">{tt("You have not answered Route 1 yet. That is fine: nothing here is blocked, and this box fills in when you do.", "Sie haben Route 1 noch nicht beantwortet. Das ist in Ordnung: Hier ist nichts gesperrt, und dieses Feld füllt sich, sobald Sie es tun.")}</p>
         )}
-        <button type="button" onClick={() => jump("block-2-2", "/route-1/")} className="btn-ghost btn-sm mt-2">
-          {tt("Go to Block 2.2 in Route 1", "Zu Block 2.2 in Route 1")}
+        <button type="button" onClick={() => jump("block-2-3", "/route-1/")} className="btn-ghost btn-sm mt-2">
+          {tt("Go to Block 2.3 in Route 1", "Zu Block 2.3 in Route 1")}
         </button>
       </div>
       <Callout label={tt("Case assumption", "Fallannahme")} tone="amber">
@@ -101,48 +105,44 @@ export function Task2() {
   return (
     <div className="space-y-6">
       <CaseBrief />
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)]">
-        <div className="min-w-0 space-y-6 pb-14 lg:pb-0">
-          <OptionalSection
-            id="block-3-1"
-            title={tt("Block 3.1 · Prioritisation criteria", "Block 3.1 · Priorisierungskriterien")}
-            minutes={BLOCK_MINUTES["3.1"]}
-            reason={tt("Names the criteria behind the ratings; Block 3.2 can rate the segments without a separate ranking of criteria.", "Benennt die Kriterien hinter den Bewertungen; Block 3.2 kann die Segmente auch ohne eine eigene Rangfolge der Kriterien bewerten.")}
-          >
-            <Block31 />
-          </OptionalSection>
-          <Block32 />
-          <OptionalSection
-            id="block-3-3"
-            title={tt("Block 3.3 · A sales model per segment", "Block 3.3 · Ein Vertriebsmodell pro Segment")}
-            minutes={BLOCK_MINUTES["3.3"]}
-            reason={tt("Turns the chosen segments into sales models; the measures in Block 3.5 and the decision in Block 3.6 do not require it.", "Macht aus den gewählten Segmenten Vertriebsmodelle; die Maßnahmen in Block 3.5 und die Entscheidung in Block 3.6 setzen es nicht voraus.")}
-          >
-            <Block33 />
-          </OptionalSection>
-          <OptionalSection
-            id="block-3-4"
-            title={tt("Block 3.4 · Standardise or individualise", "Block 3.4 · Standardisieren oder individualisieren")}
-            minutes={BLOCK_MINUTES["3.4"]}
-            reason={tt("A design question on how much of the offer is fixed; the decision in Block 3.6 can be made and defended without it.", "Eine Designfrage dazu, wie viel vom Angebot feststeht; die Entscheidung in Block 3.6 lässt sich auch ohne sie treffen und begründen.")}
-          >
-            <Block34 />
-          </OptionalSection>
-          <Block35 />
-          <Block36 />
-          <ExportBar
-            id="export-l3"
-            previewTitle={tt("Preview of your memo", "Vorschau Ihres Memos")}
-            exportLabel={tt("Export the Segment Strategy Memo", "Segment Strategy Memo exportieren")}
-            docTitle="Segment Strategy Memo"
-            filename={filename}
-            missing={missing}
-            buildBody={() => memoBody(p)}
-            showPreview={false}
-          />
-        </div>
-        <MemoPanel />
-      </div>
+      <OptionalSection
+        id="block-3-1"
+        title={tt("Block 3.1 · Prioritisation criteria", "Block 3.1 · Priorisierungskriterien")}
+        minutes={BLOCK_MINUTES["3.1"]}
+        reason={tt("Names the criteria behind the ratings; Block 3.2 can rate the segments without a separate ranking of criteria.", "Benennt die Kriterien hinter den Bewertungen; Block 3.2 kann die Segmente auch ohne eine eigene Rangfolge der Kriterien bewerten.")}
+      >
+        <Block31 />
+      </OptionalSection>
+      <Block32 />
+      <OptionalSection
+        id="block-3-3"
+        title={tt("Block 3.3 · A sales model per segment", "Block 3.3 · Ein Vertriebsmodell pro Segment")}
+        minutes={BLOCK_MINUTES["3.3"]}
+        reason={tt("Turns the chosen segments into sales models; the measures in Block 3.5 and the decision in Block 3.6 do not require it.", "Macht aus den gewählten Segmenten Vertriebsmodelle; die Maßnahmen in Block 3.5 und die Entscheidung in Block 3.6 setzen es nicht voraus.")}
+      >
+        <Block33 />
+      </OptionalSection>
+      <OptionalSection
+        id="block-3-4"
+        title={tt("Block 3.4 · Standardise or individualise", "Block 3.4 · Standardisieren oder individualisieren")}
+        minutes={BLOCK_MINUTES["3.4"]}
+        reason={tt("A design question on how much of the offer is fixed; the decision in Block 3.6 can be made and defended without it.", "Eine Designfrage dazu, wie viel vom Angebot feststeht; die Entscheidung in Block 3.6 lässt sich auch ohne sie treffen und begründen.")}
+      >
+        <Block34 />
+      </OptionalSection>
+      <Block35 />
+      <Block36 />
+      <MemoPanel />
+      <ExportBar
+        id="export-l3"
+        previewTitle={tt("Preview of your memo", "Vorschau Ihres Memos")}
+        exportLabel={tt("Export the Segment Strategy Memo", "Segment Strategy Memo exportieren")}
+        docTitle="Segment Strategy Memo"
+        filename={filename}
+        missing={missing}
+        buildBody={() => memoBody(p)}
+        showPreview={false}
+      />
     </div>
   );
 }

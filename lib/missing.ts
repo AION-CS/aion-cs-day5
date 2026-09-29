@@ -74,11 +74,9 @@ export function l1Missing(p: Persisted): MissingEntry[] {
   if (!isOptionalBlock("b13")) {
   if (!l1.tg) e(IDS.tg, tt(`${B("1.3")}: say whether the strategy paper names a target group or a segment.`, `${B("1.3")}: Sagen Sie, ob das Strategiepapier eine Zielgruppe oder ein Segment nennt.`));
   if (!l1.diff) e(IDS.diff, tt(`${B("1.3")}: choose where the accounts differ the most.`, `${B("1.3")}: Wählen Sie, wo sich die Accounts am stärksten unterscheiden.`));
-  let firmo = 0;
   l1.sketches.forEach((s, i) => {
     const n = i + 1;
     if (!s.basis) e(IDS.sketch(i), tt(`${B("1.3")}: segment sketch ${n} has no basis chosen.`, `${B("1.3")}: Segmentskizze ${n} hat keine Grundlage gewählt.`));
-    if (s.basis === "firmo" && ++firmo > 1) e(IDS.sketch(i), tt(`${B("1.3")}: sketch ${n} is a second firmographic-only segment. Base it on a need or a behaviour.`, `${B("1.3")}: Skizze ${n} ist ein zweites rein firmografisches Segment. Stützen Sie es auf einen Bedarf oder ein Verhalten.`));
     const t = s.text.trim();
     if (!t) e(IDS.sketch(i), tt(`${B("1.3")}: segment sketch ${n} is empty.`, `${B("1.3")}: Segmentskizze ${n} ist leer.`));
     else if (t.length < SKETCH_MIN) e(IDS.sketch(i), tt(`${B("1.3")}: sketch ${n} needs at least ${SKETCH_MIN} characters.`, `${B("1.3")}: Skizze ${n} braucht mindestens ${SKETCH_MIN} Zeichen.`));
@@ -144,7 +142,6 @@ export function r2Missing(p: Persisted): MissingEntry[] {
   }
   const f = funded(r2);
   if (f.length === 0) e(IDS.archTotal, tt(`${B("3.5")}: fund at least one item.`, `${B("3.5")}: Finanzieren Sie mindestens einen Punkt.`));
-  if (archOver(r2) > 0) e(IDS.archTotal, tt(`${B("3.5")}: the funded items are ${euro(archOver(r2))} over the ${euro(R2_BUDGET)} budget.`, `${B("3.5")}: Die finanzierten Punkte liegen ${euro(archOver(r2))} über dem Budget von ${euro(R2_BUDGET)}.`));
   for (const id of f) {
     const name = ARCH_BY_ID[id].name;
     if (r2.start[id] == null) e(IDS.arch(id), tt(`${B("3.5")}: “${name}” has no start month.`, `${B("3.5")}: „${name}“ hat keinen Startmonat.`));
