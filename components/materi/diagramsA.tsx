@@ -2,7 +2,7 @@
 
 import { useId, useState } from "react";
 import clsx from "clsx";
-import { Diagram, Insight, Story, Toggles } from "@/components/materi/kit";
+import { Diagram, Insight, Story, ThePoint, Toggles, useStory } from "@/components/materi/kit";
 import { SEGMENTS } from "@/data/segments";
 import type { SegmentId } from "@/data/segments";
 import { CRIT_LABEL } from "@/data/criteria";
@@ -71,8 +71,44 @@ export function FitGap() {
   const gInd = gapOf("industry");
   const gNeed = gapOf("need");
   const cur = gapOf(mode);
+  const r = (v: number) => num(Math.round(v));
+  const story = useStory([
+    {
+      title: tt("One offer for all", "Ein Angebot für alle"),
+      say: tt(
+        `Weserdata, an example company, has 15 customers (the circles). Where a circle sits shows what that customer needs. One offer for everyone (the diamond) lands in the middle, far from almost everyone: on average ${r(gOne)} points away. That is why the offer feels generic.`,
+        `Weserdata, ein Beispielunternehmen, hat 15 Kunden (die Kreise). Wo ein Kreis sitzt, zeigt, was dieser Kunde braucht. Ein Angebot für alle (die Raute) landet in der Mitte, weit weg von fast allen: im Schnitt ${r(gOne)} Punkte. Deshalb wirkt das Angebot generisch.`,
+      ),
+      look: tt("the long dashed lines from each circle to the one diamond.", "die langen gestrichelten Linien von jedem Kreis zur einen Raute."),
+      apply: () => setMode("one"),
+    },
+    {
+      title: tt("One offer per industry: hardly better", "Ein Angebot pro Branche: kaum besser"),
+      say: tt(
+        `Now one offer per industry (H, L, S). It barely helps: the distance only drops to ${r(gInd)} points, because customers of the same industry sit in different corners. Same industry does not mean same need.`,
+        `Jetzt ein Angebot pro Branche (H, L, S). Es hilft kaum: Der Abstand sinkt nur auf ${r(gInd)} Punkte, weil Kunden derselben Branche in verschiedenen Ecken sitzen. Gleiche Branche heißt nicht gleicher Bedarf.`,
+      ),
+      look: tt("the dashed lines are still long.", "die gestrichelten Linien sind immer noch lang."),
+      apply: () => setMode("industry"),
+    },
+    {
+      title: tt("One offer per need: it fits", "Ein Angebot pro Bedarf: es passt"),
+      say: tt(
+        `Same number of offers, but built around what customers need: the distance drops to ${r(gNeed)} points. The point: group customers by what they need, not by their industry.`,
+        `Gleich viele Angebote, aber um den Bedarf gebaut: Der Abstand sinkt auf ${r(gNeed)} Punkte. Das Wichtigste: Gruppieren Sie Kunden nach ihrem Bedarf, nicht nach ihrer Branche.`,
+      ),
+      look: tt("each diamond now sits inside its own group; the lines are short.", "jede Raute sitzt jetzt in ihrer Gruppe; die Linien sind kurz."),
+      apply: () => setMode("need"),
+    },
+  ]);
   return (
     <div className="space-y-3">
+      <ThePoint>
+        {tt(
+          "Customers of the same industry often need very different things. An offer fits best when you group customers by what they need, not by their industry or size.",
+          "Kunden derselben Branche brauchen oft ganz Verschiedenes. Ein Angebot passt am besten, wenn Sie Kunden nach ihrem Bedarf gruppieren, nicht nach Branche oder Größe.",
+        )}
+      </ThePoint>
       <svg viewBox="0 0 560 290" className="mx-auto h-auto w-full max-w-[600px]" role="img" aria-labelledby={`${uid}-t ${uid}-d`}>
         <title id={`${uid}-t`}>{tt("Fifteen customers of Weserdata placed by their two needs, and the offers that serve them", "Fünfzehn Kunden von Weserdata, nach ihren zwei Bedarfen platziert, und die Angebote, die sie bedienen")}</title>
         <desc id={`${uid}-d`}>{tt(`Mode: ${mode}. ${gs.length} offer(s). Average distance between what a customer needs and its offer: ${num(Math.round(cur))} points.`, `Modus: ${mode}. ${gs.length} Angebot(e). Durchschnittlicher Abstand zwischen Bedarf und Angebot: ${num(Math.round(cur))} Punkte.`)}</desc>
@@ -97,12 +133,16 @@ export function FitGap() {
         ))}
         <text x="64" y="22" fontSize="11.5" fill={C.ash}>{tt("circle = customer (H health, L logistics, S software) · diamond = an offer · dashed = the gap", "Kreis = Kunde (H Gesundheit, L Logistik, S Software) · Raute = ein Angebot · gestrichelt = die Lücke")}</text>
       </svg>
+      <Story steps={story.plan} step={story.step} onStep={story.go} />
       <div className="space-y-1.5">
         <p className="smallcaps">{tt("How many offers, built around what?", "Wie viele Angebote, gebaut worum?")}</p>
         <Toggles<FitMode>
           label={tt("Offer design", "Angebotsdesign")}
           value={mode}
-          onChange={setMode}
+          onChange={(v) => {
+            story.leave();
+            setMode(v);
+          }}
           options={[
             { id: "one", label: tt("One offer for all", "Ein Angebot für alle") },
             { id: "industry", label: tt("One offer per industry", "Ein Angebot pro Branche") },
@@ -155,8 +195,60 @@ export function SegmentLadder() {
   const p = PATHS[path];
   const label = (s: Step) => (s === "segment" ? p.seg : s === "need" ? p.need : s === "offer" ? p.offer : s === "market" ? tt("All companies buying cloud", "Alle Cloud-Käufer") : tt("Mittelstand, North, 50–2,000", "Mittelstand, Nord, 50–2.000"));
   const W = [520, 440, 360, 360, 360];
+  const story = useStory([
+    {
+      title: tt("First: whom do we serve at all?", "Zuerst: Wen bedienen wir überhaupt?"),
+      say: tt(
+        "Weserdata, an example company, first decides whom it serves at all: Mittelstand companies in Northern Germany. That is the target group. It is one big choice that stays for years.",
+        "Weserdata, ein Beispielunternehmen, entscheidet zuerst, wen es überhaupt bedient: Mittelständler in Norddeutschland. Das ist die Zielgruppe. Sie ist eine große Wahl, die für Jahre bleibt.",
+      ),
+      look: tt("the highlighted box “Target group”.", "das markierte Feld „Zielgruppe“."),
+      apply: () => {
+        setPath("clinic");
+        setStep("target");
+      },
+    },
+    {
+      title: tt("Then: smaller groups with their own offer", "Dann: kleinere Gruppen mit eigenem Angebot"),
+      say: tt(
+        "Inside that group Weserdata finds smaller groups that need different things, for example clinics that must prove where patient data is. That is a segment: a need, and an offer that answers it.",
+        "Innerhalb dieser Gruppe findet Weserdata kleinere Gruppen, die Verschiedenes brauchen, zum Beispiel Kliniken, die nachweisen müssen, wo Patientendaten liegen. Das ist ein Segment: ein Bedarf und ein Angebot, das ihn beantwortet.",
+      ),
+      look: tt("the three lower boxes: segment, need, offer.", "die drei unteren Felder: Segment, Bedarf, Angebot."),
+      apply: () => {
+        setPath("clinic");
+        setStep("segment");
+      },
+    },
+    {
+      title: tt("The point", "Das Wichtigste"),
+      say: tt(
+        "Switch to retail chains: the top stays the same, only the lower boxes change. The point: the target group says whom you address; a segment is a group inside it that gets its own offer.",
+        "Wechsel zu Handelsketten: Oben bleibt alles gleich, nur die unteren Felder ändern sich. Das Wichtigste: Die Zielgruppe sagt, wen Sie ansprechen; ein Segment ist eine Gruppe darin, die ein eigenes Angebot bekommt.",
+      ),
+      look: tt("the top two boxes did not change; the lower three did.", "die oberen zwei Felder blieben gleich; die unteren drei änderten sich."),
+      apply: () => {
+        setPath("retail");
+        setStep("offer");
+      },
+    },
+  ]);
+  const pickPath = (v: Path) => {
+    story.leave();
+    setPath(v);
+  };
+  const pickStep = (v: Step) => {
+    story.leave();
+    setStep(v);
+  };
   return (
     <div className="space-y-3">
+      <ThePoint>
+        {tt(
+          "The target group is whom you address at all. A segment is a smaller group inside it with its own need and its own offer.",
+          "Die Zielgruppe ist, wen Sie überhaupt ansprechen. Ein Segment ist eine kleinere Gruppe darin, mit eigenem Bedarf und eigenem Angebot.",
+        )}
+      </ThePoint>
       <svg viewBox="0 0 560 290" className="mx-auto h-auto w-full max-w-[600px]" role="img" aria-labelledby={`${uid}-t ${uid}-d`}>
         <title id={`${uid}-t`}>{tt("From market to target group to segment to need to offer", "Vom Markt zur Zielgruppe zum Segment zum Bedarf zum Angebot")}</title>
         <desc id={`${uid}-d`}>{tt(`Following the segment “${p.seg}”: need “${p.need}”, offer “${p.offer}”.`, `Segment „${p.seg}“: Bedarf „${p.need}“, Angebot „${p.offer}“.`)}</desc>
@@ -167,7 +259,7 @@ export function SegmentLadder() {
           const on = s === step;
           const strategic = s === "target" || s === "market";
           return (
-            <g key={s} className="hit" role="button" tabIndex={0} aria-label={STEP_TEXT[s].name} onClick={() => setStep(s)} onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && setStep(s)}>
+            <g key={s} className="hit" role="button" tabIndex={0} aria-label={STEP_TEXT[s].name} onClick={() => pickStep(s)} onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && pickStep(s)}>
               <rect className="hit-shape" x={x} y={y} width={w} height="44" rx="8" fill={on ? C.soft : strategic ? C.mist : C.tealSoft} stroke={on ? C.amber : strategic ? C.ash : C.teal} strokeWidth={on ? 2.4 : 1.4} strokeDasharray={strategic ? "6 4" : undefined} />
               <text x="280" y={y + 18} textAnchor="middle" fontSize="11.5" fontWeight="700" fill={C.ash}>{STEP_TEXT[s].name.toUpperCase()}</text>
               <text x="280" y={y + 35} textAnchor="middle" fontSize="13" fontWeight="600" fill={C.ink}>{label(s)}</text>
@@ -176,14 +268,15 @@ export function SegmentLadder() {
           );
         })}
       </svg>
+      <Story steps={story.plan} step={story.step} onStep={story.go} />
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="space-y-1.5">
           <p className="smallcaps">{tt("Follow one segment of Weserdata", "Einem Segment von Weserdata folgen")}</p>
-          <Toggles<Path> label={tt("Segment", "Segment")} value={path} onChange={setPath} options={(Object.keys(PATHS) as Path[]).map((k) => ({ id: k, label: PATHS[k].seg }))} />
+          <Toggles<Path> label={tt("Segment", "Segment")} value={path} onChange={pickPath} options={(Object.keys(PATHS) as Path[]).map((k) => ({ id: k, label: PATHS[k].seg }))} />
         </div>
         <div className="space-y-1.5">
           <p className="smallcaps">{tt("Read one level", "Eine Ebene lesen")}</p>
-          <Toggles<Step> label={tt("Level", "Ebene")} value={step} onChange={setStep} options={STEPS.map((s) => ({ id: s, label: STEP_TEXT[s].name }))} />
+          <Toggles<Step> label={tt("Level", "Ebene")} value={step} onChange={pickStep} options={STEPS.map((s) => ({ id: s, label: STEP_TEXT[s].name }))} />
         </div>
       </div>
       <div className="rounded-lg border border-line bg-paper p-3.5 text-caption" aria-live="polite">
@@ -222,8 +315,48 @@ export function NestedRings() {
   const [sel, setSel] = useState<Ring>("firmo");
   const r = RINGS.find((x) => x.id === sel)!;
   const idx = RINGS.findIndex((x) => x.id === sel);
+  const ring = (id: Ring) => RINGS.find((x) => x.id === id)!;
+  const story = useStory([
+    {
+      title: tt("Outside: easy to get, says little", "Außen: leicht zu bekommen, sagt wenig"),
+      say: tt(
+        `The outer layer is plain facts: industry, size, city. Every database has them. But they say little about what a customer needs: ${ring("firmo").predict} of 3.`,
+        `Die äußere Schicht sind einfache Fakten: Branche, Größe, Stadt. Jede Datenbank hat sie. Aber sie sagen wenig darüber, was ein Kunde braucht: ${ring("firmo").predict} von 3.`,
+      ),
+      look: tt("the outer ring, and the scores below the picture.", "den äußeren Ring und die Werte unter dem Bild."),
+      apply: () => setSel("firmo"),
+    },
+    {
+      title: tt("Inside: hard to get, says a lot", "Innen: schwer zu bekommen, sagt viel"),
+      say: tt(
+        `Near the centre: the problem the customer must solve now, for example “must pass an audit by March”. No database has it; you learn it by asking. It tells you almost exactly what to offer: ${ring("situation").predict} of 3.`,
+        `Nahe der Mitte: das Problem, das der Kunde jetzt lösen muss, zum Beispiel „muss bis März ein Audit bestehen“. Keine Datenbank hat das; man erfährt es durch Fragen. Es sagt fast genau, was man anbieten sollte: ${ring("situation").predict} von 3.`,
+      ),
+      look: tt("the inner ring, and the scores below the picture.", "den inneren Ring und die Werte unter dem Bild."),
+      apply: () => setSel("situation"),
+    },
+    {
+      title: tt("The point", "Das Wichtigste"),
+      say: tt(
+        "The easier a piece of customer data is to get, the less it tells you. To know what to offer, go inside: ask customers what they must solve and how they decide.",
+        "Je leichter eine Kundeninformation zu bekommen ist, desto weniger sagt sie. Um zu wissen, was Sie anbieten sollen, gehen Sie nach innen: Fragen Sie Kunden, was sie lösen müssen und wie sie entscheiden.",
+      ),
+      look: tt("outside = easy but weak, inside = hard but strong.", "außen = leicht, aber schwach; innen = schwer, aber stark."),
+      apply: () => setSel("purchasing"),
+    },
+  ]);
+  const pick = (v: Ring) => {
+    story.leave();
+    setSel(v);
+  };
   return (
     <div className="space-y-3">
+      <ThePoint>
+        {tt(
+          "The easier a piece of customer data is to get (industry, size), the less it tells you about what the customer needs. The best guide is what they must solve, and you learn that by asking.",
+          "Je leichter eine Kundeninformation zu bekommen ist (Branche, Größe), desto weniger sagt sie darüber, was der Kunde braucht. Der beste Hinweis ist, was er lösen muss, und das erfahren Sie durch Fragen.",
+        )}
+      </ThePoint>
       <svg viewBox="0 0 560 250" className="mx-auto h-auto w-full max-w-[600px]" role="img" aria-labelledby={`${uid}-t ${uid}-d`}>
         <title id={`${uid}-t`}>{tt("The nested approach: five layers from the outside in", "Der Nested Approach: fünf Schichten von außen nach innen")}</title>
         <desc id={`${uid}-d`}>{tt(`Selected layer ${idx + 1} of 5: ${r.name}. Easy to see ${r.see} of 3, predicts the need ${r.predict} of 3.`, `Gewählte Schicht ${idx + 1} von 5: ${r.name}. Leicht zu sehen ${r.see} von 3, sagt den Bedarf voraus ${r.predict} von 3.`)}</desc>
@@ -232,7 +365,7 @@ export function NestedRings() {
           const ry = 118 - i * 22;
           const on = ring.id === sel;
           return (
-            <g key={ring.id} className="hit" role="button" tabIndex={0} aria-label={ring.name} onClick={() => setSel(ring.id)} onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && setSel(ring.id)}>
+            <g key={ring.id} className="hit" role="button" tabIndex={0} aria-label={ring.name} onClick={() => pick(ring.id)} onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && pick(ring.id)}>
               <ellipse className="hit-shape" cx="280" cy="125" rx={rx} ry={ry} fill={on ? C.soft : i % 2 ? C.paper : C.mist} stroke={on ? C.amber : C.ash} strokeWidth={on ? 2.6 : 1.2} />
               <text x="280" y={125 - ry + 16} textAnchor="middle" fontSize="12" fontWeight={on ? 800 : 600} fill={C.ink}>{`${i + 1} · ${ring.name}`}</text>
             </g>
@@ -240,9 +373,10 @@ export function NestedRings() {
         })}
         <text x="10" y="240" fontSize="11.5" fill={C.ash}>{tt("outside: easy to see, weak predictor · inside: hard to see, strong predictor", "außen: leicht zu sehen, schwache Vorhersage · innen: schwer zu sehen, starke Vorhersage")}</text>
       </svg>
+      <Story steps={story.plan} step={story.step} onStep={story.go} />
       <div className="space-y-1.5">
         <p className="smallcaps">{tt("Read one layer", "Eine Schicht lesen")}</p>
-        <Toggles<Ring> label={tt("Layer", "Schicht")} value={sel} onChange={setSel} options={RINGS.map((x, i) => ({ id: x.id, label: `${i + 1} · ${x.name}` }))} />
+        <Toggles<Ring> label={tt("Layer", "Schicht")} value={sel} onChange={pick} options={RINGS.map((x, i) => ({ id: x.id, label: `${i + 1} · ${x.name}` }))} />
       </div>
       <div className="rounded-lg border border-line bg-paper p-3.5 text-caption" aria-live="polite">
         <p className="smallcaps">{r.name}</p>
@@ -295,13 +429,55 @@ export function CritSortExample() {
   const [sel, setSel] = useState("w1");
   const [seen, setSeen] = useState<string[]>(["w1"]);
   const r = WS_FIELDS.find((x) => x.id === sel)!;
-  const pick = (id: string) => {
+  const open = (id: string) => {
     setSel(id);
     setSeen((s) => (s.includes(id) ? s : [...s, id]));
   };
+  const story = useStory([
+    {
+      title: tt("A fact about the company", "Eine Tatsache über das Unternehmen"),
+      say: tt(
+        "“Industry: hospital.” You could read this in any register without ever talking to the customer. It is a plain fact about the company: firmographic.",
+        "„Branche: Krankenhaus.“ Das könnten Sie in jedem Register lesen, ohne je mit dem Kunden zu sprechen. Es ist eine einfache Tatsache über das Unternehmen: firmografisch.",
+      ),
+      look: tt("the highlighted field and its label.", "das markierte Feld und seine Einordnung."),
+      apply: () => open("w1"),
+    },
+    {
+      title: tt("Something the customer did", "Etwas, das der Kunde getan hat"),
+      say: tt(
+        "“Logs in to the portal twice a day.” Your own systems recorded it: something the customer did. That is behaviour. It shows what happened, not why.",
+        "„Loggt sich zweimal täglich ins Portal ein.“ Ihre eigenen Systeme haben es festgehalten: etwas, das der Kunde getan hat. Das ist Verhalten. Es zeigt, was passiert ist, nicht warum.",
+      ),
+      look: tt("the highlighted field and its label.", "das markierte Feld und seine Einordnung."),
+      apply: () => open("w3"),
+    },
+    {
+      title: tt("Something the customer must solve", "Etwas, das der Kunde lösen muss"),
+      say: tt(
+        "“Must keep patient images for 30 years.” A duty the customer has to meet: that is a need, and it decides which offer can work. The point: ask of each piece of data, is it a fact, an action, or something they must solve?",
+        "„Muss Patientenbilder 30 Jahre aufbewahren.“ Eine Pflicht, die der Kunde erfüllen muss: Das ist ein Bedarf, und er entscheidet, welches Angebot funktionieren kann. Das Wichtigste: Fragen Sie bei jeder Information, ist es eine Tatsache, eine Handlung oder etwas, das er lösen muss?",
+      ),
+      look: tt("the highlighted field and its label.", "das markierte Feld und seine Einordnung."),
+      apply: () => open("w5"),
+    },
+  ]);
+  const pick = (id: string) => {
+    story.leave();
+    open(id);
+  };
   return (
     <Diagram label={tt("Worked example · six fields from Weserdata's CRM (Case assumption, read-only)", "Durchgerechnetes Beispiel · sechs Felder aus dem CRM von Weserdata (Fallannahme, nur lesen)")}>
-      <ol className="grid gap-2 sm:grid-cols-2">
+      <ThePoint>
+        {tt(
+          "Every piece of customer data is one of three kinds: a fact about the company, something it did, or something it must solve. Only the last one tells you what to offer.",
+          "Jede Kundeninformation ist eine von drei Arten: eine Tatsache über das Unternehmen, etwas, das es getan hat, oder etwas, das es lösen muss. Nur die letzte sagt Ihnen, was Sie anbieten sollen.",
+        )}
+      </ThePoint>
+      <div className="mt-3">
+        <Story steps={story.plan} step={story.step} onStep={story.go} />
+      </div>
+      <ol className="mt-3 grid gap-2 sm:grid-cols-2">
         {WS_FIELDS.map((h) => {
           const on = h.id === sel;
           return (
@@ -369,63 +545,41 @@ export function EffortBenefit() {
   const X = (v: number) => 150 + (Math.max(0, v) / max) * 380;
 
   // The guided walk-through: each step sets the same two controls the learner can press, and moves the spotlight in the picture.
-  const c2 = calc("clinics", 2);
   const c10 = calc("clinics", 10);
+  const r10 = calc("retail", 10);
   const steps: { seg: WSeg; up: number; focus: Focus; title: string; say: string; look: string }[] = [
-    {
-      seg: "clinics",
-      up: 2,
-      focus: null,
-      title: tt("The example company", "Das Beispielunternehmen"),
-      say: tt(
-        "Meet Weserdata, an example company that rents out cloud servers to businesses. It is not DataCloud from your task; it only shows the method. Today Weserdata sends every customer the same offer.",
-        "Lernen Sie Weserdata kennen, ein Beispielunternehmen, das Cloud-Server an Unternehmen vermietet. Es ist nicht DataCloud aus Ihrer Aufgabe; es zeigt nur die Methode. Heute schickt Weserdata jedem Kunden dasselbe Angebot.",
-      ),
-      look: tt("below, the picture shows the money side of this example.", "unten zeigt das Bild die Geldseite dieses Beispiels."),
-    },
-    {
-      seg: "clinics",
-      up: 2,
-      focus: null,
-      title: tt("The idea", "Die Idee"),
-      say: tt(
-        "One offer for everyone is like clothes that only come in one size. Personalising (also called tailoring) means making an offer that fits one group, like a tailor sewing a suit to your size.",
-        "Ein Angebot für alle ist wie Kleidung, die es nur in einer Größe gibt. Personalisieren (auch Zuschnitt genannt) heißt, ein Angebot zu machen, das zu einer Gruppe passt, wie ein Schneider, der einen Anzug nach Maß näht.",
-      ),
-      look: tt("nothing to look at yet: the next step adds the price.", "noch nichts zu sehen: der nächste Schritt fügt den Preis hinzu."),
-    },
-    {
-      seg: "clinics",
-      up: 2,
-      focus: "cost",
-      title: tt("The price", "Der Preis"),
-      say: tt(
-        `Weserdata wants to do this for clinics. It costs ${euro(WESER.cost)} every year. It is worth it only if it earns back more than that.`,
-        `Weserdata will das für Kliniken tun. Es kostet jedes Jahr ${euro(WESER.cost)}. Es lohnt sich nur, wenn es mehr als das einbringt.`,
-      ),
-      look: tt("the striped bar is the cost.", "der schraffierte Balken sind die Kosten."),
-    },
-    {
-      seg: "clinics",
-      up: 2,
-      focus: "profit",
-      title: tt("A small gain: not worth it", "Ein kleiner Gewinn: lohnt sich nicht"),
-      say: tt(
-        `Say the special offer wins just 2 more deals out of every 100 offers. That earns only ${euro(c2.extra)}. It is less than ${euro(WESER.cost)}, so Weserdata loses money.`,
-        `Sagen wir, das besondere Angebot gewinnt nur 2 Abschlüsse mehr von 100 Angeboten. Das bringt nur ${euro(c2.extra)}. Das ist weniger als ${euro(WESER.cost)}, also verliert Weserdata Geld.`,
-      ),
-      look: tt("the dark bar is what it earns, and it is short.", "der dunkle Balken zeigt, was es einbringt, und er ist kurz."),
-    },
     {
       seg: "clinics",
       up: 10,
       focus: "net",
-      title: tt("A big gain: worth it", "Ein großer Gewinn: lohnt sich"),
+      title: tt("Big contracts: it pays", "Große Verträge: es lohnt sich"),
       say: tt(
-        `With 10 more deals out of every 100 it earns ${euro(c10.extra)}. That beats ${euro(WESER.cost)}, so Weserdata keeps ${euro(c10.net)}. Tap “Retail” below to see when it does not pay.`,
-        `Mit 10 Abschlüssen mehr von 100 bringt es ${euro(c10.extra)}. Das übertrifft ${euro(WESER.cost)}, also behält Weserdata ${euro(c10.net)}. Tippen Sie unten auf „Handel“, um zu sehen, wann es sich nicht lohnt.`,
+        `Weserdata, an example company, pays ${euro(WESER.cost)} a year to make a special offer just for clinics. One clinic contract is big: ${euro(WESER.clinics.acv)}. The special offer wins ${num(c10.deals, { maximumFractionDigits: 1 })} extra contracts, which bring ${euro(c10.extra)} of profit. That is more than it costs, so it pays.`,
+        `Weserdata, ein Beispielunternehmen, zahlt ${euro(WESER.cost)} im Jahr, um ein besonderes Angebot nur für Kliniken zu machen. Ein Kliniken-Vertrag ist groß: ${euro(WESER.clinics.acv)}. Das besondere Angebot gewinnt ${num(c10.deals, { maximumFractionDigits: 1 })} zusätzliche Verträge, die ${euro(c10.extra)} Gewinn bringen. Das ist mehr, als es kostet, also lohnt es sich.`,
       ),
-      look: tt("the dark bar passes the dashed line.", "der dunkle Balken überschreitet die gestrichelte Linie."),
+      look: tt("the dark bar (what it earns) is longer than the striped bar (what it costs).", "der dunkle Balken (was es einbringt) ist länger als der schraffierte (was es kostet)."),
+    },
+    {
+      seg: "retail",
+      up: 10,
+      focus: "net",
+      title: tt("Small contracts: it does not pay", "Kleine Verträge: es lohnt sich nicht"),
+      say: tt(
+        `Now the same special offer for shops. One shop contract is small: ${euro(WESER.retail.acv)}. Even ${num(r10.deals, { maximumFractionDigits: 1 })} extra contracts bring only ${euro(r10.extra)}. That is less than the ${euro(WESER.cost)} it costs, so it loses money.`,
+        `Jetzt dasselbe besondere Angebot für Geschäfte. Ein Vertrag mit einem Geschäft ist klein: ${euro(WESER.retail.acv)}. Selbst ${num(r10.deals, { maximumFractionDigits: 1 })} zusätzliche Verträge bringen nur ${euro(r10.extra)}. Das ist weniger als die ${euro(WESER.cost)}, die es kostet, also verliert es Geld.`,
+      ),
+      look: tt("the dark bar is now shorter than the striped bar.", "der dunkle Balken ist jetzt kürzer als der schraffierte."),
+    },
+    {
+      seg: "retail",
+      up: 10,
+      focus: null,
+      title: tt("The point", "Das Wichtigste"),
+      say: tt(
+        "A special offer is worth its cost only where each contract is big. Where contracts are small, one good standard offer for everyone is the better choice. In your task you make this same check for DataCloud.",
+        "Ein besonderes Angebot ist seine Kosten nur dort wert, wo jeder Vertrag groß ist. Wo Verträge klein sind, ist ein gutes Standardangebot für alle die bessere Wahl. In Ihrer Aufgabe machen Sie dieselbe Prüfung für DataCloud.",
+      ),
+      look: tt("try the buttons below yourself.", "probieren Sie die Schaltflächen unten selbst aus."),
     },
   ];
   const goStep = (i: number | null) => {
@@ -438,6 +592,13 @@ export function EffortBenefit() {
   const ring = (y: number, h: number) => <rect x="2" y={y} width="556" height={h} rx="6" fill="none" stroke={C.gold} strokeWidth="2.5" strokeDasharray="6 4" className="anim-pulse" />;
   return (
     <div className="space-y-3">
+      <p className="rounded-lg border-l-4 border-signal bg-signalSoft px-3 py-2 text-body text-ink">
+        <span className="smallcaps mr-1.5 text-signal">{tt("The point", "Das Wichtigste")}</span>
+        <Gloss>{tt(
+          "A special offer for one group costs money every year. It is worth it only if the extra deals earn more than that cost. With big contracts that happens quickly; with small contracts it rarely does.",
+          "Ein besonderes Angebot für eine Gruppe kostet jedes Jahr Geld. Es lohnt sich nur, wenn die zusätzlichen Abschlüsse mehr einbringen als diese Kosten. Bei großen Verträgen passiert das schnell, bei kleinen selten.",
+        )}</Gloss>
+      </p>
       <svg viewBox="0 0 560 170" className="mx-auto h-auto w-full max-w-[600px]" role="img" aria-labelledby={`${uid}-t ${uid}-d`}>
         <title id={`${uid}-t`}>{tt("Extra gross profit from tailoring against its yearly cost", "Zusätzlicher Rohertrag durch Zuschnitt gegen die jährlichen Kosten")}</title>
         <desc id={`${uid}-d`}>{tt(`Extra gross profit ${euro(extra)}, cost ${euro(WESER.cost)}, net ${euroSigned(net)}.`, `Zusätzlicher Rohertrag ${euro(extra)}, Kosten ${euro(WESER.cost)}, netto ${euroSigned(net)}.`)}</desc>
@@ -450,15 +611,15 @@ export function EffortBenefit() {
         {focus === "profit" && ring(16, 46)}
         {focus === "cost" && ring(72, 46)}
         {focus === "net" && ring(130, 38)}
-        <text x="4" y="42" fontSize="13" fontWeight="700" fill={C.ink}>{tt("Extra gross profit", "Zusatz-Rohertrag")}</text>
+        <text x="4" y="42" fontSize="13" fontWeight="700" fill={C.ink}>{tt("What it earns", "Was es einbringt")}</text>
         <rect x="150" y="24" width={Math.max(X(extra) - 150, 1)} height="30" fill={C.data} stroke={C.ink} className="anim-grow-x" />
         <text x={X(extra) + 6} y="44" fontSize="13" fontWeight="700" fill={C.ink}>{euro(extra)}</text>
-        <text x="4" y="98" fontSize="13" fontWeight="700" fill={C.ink}>{tt("Yearly cost", "Jährliche Kosten")}</text>
+        <text x="4" y="98" fontSize="13" fontWeight="700" fill={C.ink}>{tt("What it costs a year", "Was es pro Jahr kostet")}</text>
         <rect x="150" y="80" width={X(WESER.cost) - 150} height="30" fill={`url(#${uid}-h)`} stroke={C.amber} strokeWidth="1.6" />
         <text x={X(WESER.cost) + 6} y="100" fontSize="13" fontWeight="700" fill={C.ink}>{euro(WESER.cost)}</text>
         <line x1={X(WESER.cost)} x2={X(WESER.cost)} y1="14" y2="120" stroke={C.ink} strokeDasharray="5 4" strokeWidth="1.5" />
         <text x="150" y="146" fontSize="13" fontWeight="700" fill={net >= 0 ? C.teal : C.rust}>{tt(`Net per year: ${euroSigned(net)} ${net >= 0 ? "(pays)" : "(does not pay)"}`, `Netto pro Jahr: ${euroSigned(net)} ${net >= 0 ? "(lohnt sich)" : "(lohnt sich nicht)"}`)}</text>
-        <text x="150" y="164" fontSize="11.5" fill={C.ash}>{tt("solid = extra gross profit · hatched = cost of tailoring · dashed = break-even", "voll = Zusatz-Rohertrag · schraffiert = Kosten des Zuschnitts · gestrichelt = Break-even")}</text>
+        <text x="4" y="164" fontSize="11.5" fill={C.ash}>{tt("dark = extra profit · striped = yearly cost · dashed line = the cost to beat", "dunkel = Zusatzgewinn · schraffiert = Jahreskosten · gestrichelt = die zu schlagenden Kosten")}</text>
       </svg>
       <Story
         step={story}
@@ -539,13 +700,56 @@ export function AssignExample() {
   const [sel, setSel] = useState("x1");
   const [seen, setSeen] = useState<string[]>(["x1"]);
   const w = WS_ACCOUNTS.find((x) => x.id === sel)!;
-  const pick = (id: string) => {
+  const open = (id: string) => {
     setSel(id);
     setSeen((s) => (s.includes(id) ? s : [...s, id]));
   };
+  const S = (id: SegmentId) => SEGMENTS[id].label;
+  const story = useStory([
+    {
+      title: tt("Must prove something", "Muss etwas nachweisen"),
+      say: tt(
+        `A hospital writes: “needs the C5 report and the list of subcontractors”. They must show proof to someone else. So they belong to ${S("assure")}.`,
+        `Ein Klinikum schreibt: „braucht den C5-Bericht und die Liste der Subunternehmer“. Es muss jemand anderem Nachweise zeigen. Also gehört es zu ${S("assure")}.`,
+      ),
+      look: tt("the highlighted words in the note.", "die markierten Worte in der Notiz."),
+      apply: () => open("x1"),
+    },
+    {
+      title: tt("Wants it done for them", "Will, dass es erledigt wird"),
+      say: tt(
+        `A car dealer writes: “Nobody here knows servers. Can you just make sure it runs?” They want someone else to do it. So they belong to ${S("handsoff")}.`,
+        `Ein Autohaus schreibt: „Hier kennt sich niemand mit Servern aus. Können Sie einfach sorgen, dass es läuft?“ Es will, dass jemand anderes das macht. Also gehört es zu ${S("handsoff")}.`,
+      ),
+      look: tt("the highlighted words in the note.", "die markierten Worte in der Notiz."),
+      apply: () => open("x2"),
+    },
+    {
+      title: tt("Size does not decide", "Die Größe entscheidet nicht"),
+      say: tt(
+        `A small broker with 60 staff writes: “Our auditor asks where client files are stored.” Small, yet it must prove something: ${S("assure")}. The point: the words in the note decide the group, never the size or the industry.`,
+        `Ein kleiner Makler mit 60 Beschäftigten schreibt: „Unser Prüfer fragt, wo Kundenakten gespeichert sind.“ Klein, und doch muss er etwas nachweisen: ${S("assure")}. Das Wichtigste: Die Worte in der Notiz entscheiden die Gruppe, nie Größe oder Branche.`,
+      ),
+      look: tt("the size in the heading, and the highlighted words.", "die Größe in der Überschrift und die markierten Worte."),
+      apply: () => open("x4"),
+    },
+  ]);
+  const pick = (id: string) => {
+    story.leave();
+    open(id);
+  };
   return (
     <Diagram label={tt("Worked example · six accounts of Weserdata, another provider (Case assumption, read-only)", "Durchgerechnetes Beispiel · sechs Accounts von Weserdata, einem anderen Anbieter (Fallannahme, nur lesen)")}>
-      <ol className="grid gap-2 sm:grid-cols-2">
+      <ThePoint>
+        {tt(
+          "To place a customer in a group, look for the few words in their own note that say what they need. Their size or industry never decides it.",
+          "Um einen Kunden einer Gruppe zuzuordnen, suchen Sie die wenigen Worte in seiner eigenen Notiz, die sagen, was er braucht. Größe oder Branche entscheiden das nie.",
+        )}
+      </ThePoint>
+      <div className="mt-3">
+        <Story steps={story.plan} step={story.step} onStep={story.go} />
+      </div>
+      <ol className="mt-3 grid gap-2 sm:grid-cols-2">
         {WS_ACCOUNTS.map((n) => {
           const on = n.id === sel;
           return (
@@ -605,8 +809,43 @@ export function ValueExample() {
   const [by, setBy] = useState<"count" | "value">("count");
   const rows = [...W_SEGS].sort((a, b) => (by === "count" ? b.accounts - a.accounts : b.acv - a.acv));
   const X = (v: number) => 140 + (by === "count" ? (v / 6) * 360 : (v / 180000) * 360);
+  const story = useStory([
+    {
+      title: tt("Counted by customers", "Nach Kunden gezählt"),
+      say: tt(
+        "Weserdata, an example company, has three customer groups. Counted by the number of customers, retail looks biggest: 5 of the 10.",
+        "Weserdata, ein Beispielunternehmen, hat drei Kundengruppen. Nach der Zahl der Kunden gezählt, wirkt der Handel am größten: 5 von 10.",
+      ),
+      look: tt("the grey bars: retail is longest.", "die grauen Balken: Der Handel ist am längsten."),
+      apply: () => setBy("count"),
+    },
+    {
+      title: tt("Counted by money", "Nach Geld gezählt"),
+      say: tt(
+        `Now add up what their contracts are worth: clinics ${euro(150000)}, software ${euro(110000)}, retail only ${euro(60000)}. The order turns round: the group with the most customers is worth the least.`,
+        `Jetzt addieren Sie, was ihre Verträge wert sind: Kliniken ${euro(150000)}, Software ${euro(110000)}, Handel nur ${euro(60000)}. Die Reihenfolge dreht sich: Die Gruppe mit den meisten Kunden ist am wenigsten wert.`,
+      ),
+      look: tt("the dark bars: clinics now come first.", "die dunklen Balken: Jetzt stehen die Kliniken vorn."),
+      apply: () => setBy("value"),
+    },
+    {
+      title: tt("The point", "Das Wichtigste"),
+      say: tt(
+        "Put your effort where the money is, not where the most names are. A long customer list is not the same as a valuable one.",
+        "Stecken Sie Ihre Mühe dorthin, wo das Geld ist, nicht dorthin, wo die meisten Namen stehen. Eine lange Kundenliste ist nicht dasselbe wie eine wertvolle.",
+      ),
+      look: tt("switch between the two buttons below and watch the order change.", "wechseln Sie unten zwischen den zwei Schaltflächen und sehen Sie, wie sich die Reihenfolge ändert."),
+      apply: () => setBy("value"),
+    },
+  ]);
   return (
     <div className="space-y-3">
+      <ThePoint>
+        {tt(
+          "The group with the most customers is not always the most valuable. Rank groups by what their contracts are worth, and start there.",
+          "Die Gruppe mit den meisten Kunden ist nicht immer die wertvollste. Ordnen Sie Gruppen danach, was ihre Verträge wert sind, und fangen Sie dort an.",
+        )}
+      </ThePoint>
       <svg viewBox="0 0 560 160" className="mx-auto h-auto w-full max-w-[600px]" role="img" aria-labelledby={`${uid}-t ${uid}-d`}>
         <title id={`${uid}-t`}>{tt("Weserdata's three segments ranked by accounts or by potential contract value", "Die drei Segmente von Weserdata, geordnet nach Accounts oder nach potenziellem Vertragswert")}</title>
         <desc id={`${uid}-d`}>{rows.map((r) => `${r.name}: ${r.accounts}, ${euro(r.acv)}`).join(". ")}</desc>
@@ -625,12 +864,16 @@ export function ValueExample() {
         })}
         <text x="140" y="154" fontSize="11.5" fill={C.ash}>{by === "count" ? tt("grey = number of accounts in the sample", "grau = Zahl der Accounts in der Stichprobe") : tt("teal-dark = sum of potential annual contract value", "dunkel = Summe des potenziellen Jahresvertragswerts")}</text>
       </svg>
+      <Story steps={story.plan} step={story.step} onStep={story.go} />
       <div className="space-y-1.5">
         <p className="smallcaps">{tt("Rank the segments by", "Segmente ordnen nach")}</p>
         <Toggles<"count" | "value">
           label={tt("Ranking basis", "Grundlage der Rangfolge")}
           value={by}
-          onChange={setBy}
+          onChange={(v) => {
+            story.leave();
+            setBy(v);
+          }}
           options={[
             { id: "count", label: tt("Number of accounts", "Zahl der Accounts") },
             { id: "value", label: tt("Potential contract value", "Potenzieller Vertragswert") },
@@ -666,8 +909,14 @@ export function ScoreExample() {
   ];
   const [rows, setRows] = useState<EM[]>(start);
   const [inc, setInc] = useState<string[]>(["p", "q", "r"]);
-  const cycle = (id: string, f: "rel" | "dif") => setRows((rs) => rs.map((r) => (r.id === id ? { ...r, [f]: ((r[f] % 3) + 1) as 1 | 2 | 3 } : r)));
-  const toggle = (id: string) => setInc((c) => (c.includes(id) ? c.filter((x) => x !== id) : [...c, id]));
+  const cycle = (id: string, f: "rel" | "dif") => {
+    story.leave();
+    setRows((rs) => rs.map((r) => (r.id === id ? { ...r, [f]: ((r[f] % 3) + 1) as 1 | 2 | 3 } : r)));
+  };
+  const toggle = (id: string) => {
+    story.leave();
+    setInc((c) => (c.includes(id) ? c.filter((x) => x !== id) : [...c, id]));
+  };
   const scored = rows.map((r) => {
     const per = r.cost / r.reach;
     const ev = evBucket(per);
@@ -679,8 +928,56 @@ export function ScoreExample() {
   const lowest = [...chosen].sort((a, b) => a.score - b.score)[0];
   const S = (v: number) => 8 + (v / (BUD_W * 1.5)) * 544;
   let acc = 0;
+  const base = start().map((r) => ({ ...r, score: r.rel * r.dif * evBucket(r.cost / r.reach) }));
+  const [p0, q0, r0] = base;
+  const all = base.reduce((s, r) => s + r.cost, 0);
+  const story = useStory([
+    {
+      title: tt("Three ideas, too little money", "Drei Ideen, zu wenig Geld"),
+      say: tt(
+        `Weserdata, an example company, has ${euro(BUD_W)} and three ideas. All three together cost ${euro(all)}: that does not fit.`,
+        `Weserdata, ein Beispielunternehmen, hat ${euro(BUD_W)} und drei Ideen. Alle drei zusammen kosten ${euro(all)}: Das passt nicht.`,
+      ),
+      look: tt("the striped part of the bar is what is over the budget.", "der schraffierte Teil des Balkens ist, was über dem Budget liegt."),
+      apply: () => {
+        setRows(start());
+        setInc(["p", "q", "r"]);
+      },
+    },
+    {
+      title: tt("Give each idea a score", "Jeder Idee einen Wert geben"),
+      say: tt(
+        `Each idea gets a score: does it help a valuable group, is it something others do not offer, and is it cheap per customer? The clinic folder scores ${p0.score}, the retail package ${q0.score}, the individual proposals only ${r0.score}, because they cost ${euro(r0.cost / r0.reach)} per customer.`,
+        `Jede Idee bekommt einen Wert: Hilft sie einer wertvollen Gruppe, bietet sie etwas, das andere nicht bieten, und ist sie pro Kunde günstig? Der Klinik-Prüfordner erzielt ${p0.score}, das Handelspaket ${q0.score}, die individuellen Angebote nur ${r0.score}, weil sie ${euro(r0.cost / r0.reach)} pro Kunde kosten.`,
+      ),
+      look: tt("the Score column on the right.", "die Spalte Wert rechts."),
+      apply: () => {
+        setRows(start());
+        setInc(["p", "q", "r"]);
+      },
+    },
+    {
+      title: tt("Drop the weakest", "Die schwächste streichen"),
+      say: tt(
+        `Leave out the idea with the lowest score. The plan now costs ${euro(p0.cost + q0.cost)} and fits. The point: score every idea, then drop the weakest until the plan fits the money.`,
+        `Lassen Sie die Idee mit dem niedrigsten Wert weg. Der Plan kostet jetzt ${euro(p0.cost + q0.cost)} und passt. Das Wichtigste: Bewerten Sie jede Idee und streichen Sie die schwächste, bis der Plan ins Budget passt.`,
+      ),
+      look: tt("the bar now ends before the budget line.", "der Balken endet jetzt vor der Budgetlinie."),
+      apply: () => {
+        setRows(start());
+        setInc(["p", "q"]);
+      },
+    },
+  ]);
   return (
     <div className="space-y-3">
+      <ThePoint>
+        {tt(
+          "When the money is not enough for every idea, give each idea a score and drop the weakest first. Do not cut every idea a little.",
+          "Wenn das Geld nicht für jede Idee reicht, geben Sie jeder Idee einen Wert und streichen zuerst die schwächste. Kürzen Sie nicht jede Idee ein bisschen.",
+        )}
+      </ThePoint>
+      <Story steps={story.plan} step={story.step} onStep={story.go} />
       <div className="relative overflow-x-auto rounded-lg border border-line">
         <table className="w-full min-w-[38rem] border-collapse text-caption">
           <caption className="sr-only">{tt("Three measures of Weserdata scored on relevance, differentiation and economic viability", "Drei Maßnahmen von Weserdata, bewertet nach Relevanz, Differenzierung und Wirtschaftlichkeit")}</caption>

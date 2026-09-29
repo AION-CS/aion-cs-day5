@@ -78,7 +78,17 @@ export function Insight({ children, className }: { children: ReactNode; classNam
   return (
     <p aria-live="polite" className={clsx("insight rounded-md bg-mist px-3 py-2 text-caption text-ink", className)}>
       <span className="smallcaps mr-1.5 text-ash">{tt("What this shows", "Was das zeigt")}</span>
-      {children}
+      {glossify(children)}
+    </p>
+  );
+}
+
+/** "The point" (CLAUDE.md #36): the whole lesson of an interactive picture in one to three everyday sentences, always visible. */
+export function ThePoint({ children }: { children: ReactNode }) {
+  return (
+    <p className="rounded-lg border-l-4 border-signal bg-signalSoft px-3 py-2 text-body text-ink">
+      <span className="smallcaps mr-1.5 text-signal">{tt("The point", "Das Wichtigste")}</span>
+      {glossify(children)}
     </p>
   );
 }
@@ -93,6 +103,22 @@ export type StoryStep = {
   /** One short line naming what to look at in the picture right now. */
   look?: string;
 };
+
+/** A story step that also sets the picture: `apply` calls the diagram's own setters, so the picture is the one the buttons make. */
+export type StoryPlan = StoryStep & { apply: () => void };
+
+/**
+ * The state of a diagram's story. `go(i)` opens step i and applies it; `leave()` is called by every manual control so the
+ * narration never disagrees with the picture.
+ */
+export function useStory(plan: StoryPlan[]) {
+  const [step, setStep] = useState<number | null>(null);
+  const go = (i: number | null) => {
+    setStep(i);
+    if (i !== null) plan[i].apply();
+  };
+  return { step, go, leave: () => setStep(null), plan };
+}
 
 /**
  * A guided walk through an interactive picture: one "Next" press per idea, so a learner can understand it by reading one short
@@ -128,7 +154,7 @@ export function Story({ steps, step, onStep }: { steps: StoryStep[]; step: numbe
         </button>
       </div>
       <div aria-live="polite" className="space-y-1.5 text-body text-ink">
-        <p>{s.say}</p>
+        <p>{glossify(s.say)}</p>
         {s.look && (
           <p className="text-caption text-ash">
             <span aria-hidden>👁 </span>

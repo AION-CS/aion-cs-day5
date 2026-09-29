@@ -120,9 +120,11 @@ a worked answer (with arithmetic) under every other question, in rust, never exp
     it belongs in (`keyPhrases`; a script check proves every phrase is an exact substring of its text in both languages).
 12. **Calculation help.** Block 1.2 already had "Show where the numbers are", "Show the formula" and the calculator with per-part clues;
     Block 2.3 gained a hidden "Show the formula" per measure for economic viability (cost per account, from Materi A7).
-13. **Guided story and videos (CLAUDE.md #36, 2026-09-29).** "Effort against benefit" (A4) is the first diagram with a "Walk me through it"
-    story (`Story` in `components/materi/kit.tsx`, four steps (an everyday picture of the idea first) that drive the real controls and move a spotlight ring; numbers computed from
-    the same constants). The other eleven interactive diagrams of Day 5 do not have a story yet. Two videos are embedded through
+13. **Guided story and videos (CLAUDE.md #36, 2026-09-29).** All twelve interactive diagrams of Day 5 (A1 fit gap, A2 ladder, A3 rings and
+    worked sort, A4 effort against benefit, A5 worked assignment, A6 count or value, A7 scoring, B1 nine-box, B2 sales-model cost, B3
+    standardise or individualise, B4 regret table, B5 architecture) open with "The point" and carry a three-step "Walk me through it" story
+    (the case that works, the case that does not, the point) that drives the real controls (`ThePoint`, `useStory`, `Story` in
+    `components/materi/kit.tsx`); every number is computed from the same constants as the picture. Two videos are embedded through
     `data/videos.ts` and `Watch`: A4 (McKinsey & Company, 2 min, counted in the card) and A3 (Tony Seba, Stanford lecture, 39 min, optional).
     Both were checked for uploader, length, embeddability and captions on 2026-09-29 but **not watched through**: preview before teaching.
     No video met the bar for Materi B.

@@ -173,12 +173,12 @@ export const GLOSSARY: GlossEntry[] = [
   {
     id: "personalisation",
     title: "Personalisation",
-    match: ["personalisation", "personalization", "personalise", "personalising", "personalised", "personalize", "personalized"],
+    match: ["personalisation", "personalization", "personalise", "personalising", "personalised", "personalize", "personalized", "tailoring", "tailored"],
     plain: "Changing what you offer or say so it fits a particular customer group or account better. In B2B it ranges from one message per segment to a proposal written for one account.",
     from: "McKinsey 2021",
     de: {
       title: "Personalisierung",
-      match: ["Personalisierung", "Personalisierungsmaßnahmen", "personalisiert", "personalisieren", "personalisierte"],
+      match: ["Personalisierung", "Personalisierungsmaßnahmen", "personalisiert", "personalisieren", "personalisierte", "Personalisieren", "Zuschnitt"],
       plain: "Das, was man anbietet oder sagt, so verändern, dass es besser zu einer Kundengruppe oder einem Account passt. Im B2B reicht es von einer Botschaft pro Segment bis zu einem Angebot für einen einzigen Account.",
     },
   },
@@ -244,14 +244,26 @@ export const GLOSSARY: GlossEntry[] = [
   {
     id: "gross-margin",
     title: "Gross margin, gross profit",
-    match: ["gross margin", "gross profit", "margin"],
+    match: ["gross margin", "gross profit", "margin", "extra profit"],
     plain: "What is left of revenue after the direct cost of delivering the service. The margin is that share in percent; the gross profit is the amount in euros.",
     example: "€10,000 of revenue at a 35% margin is €3,500 of gross profit.",
     de: {
       title: "Bruttomarge, Rohertrag",
-      match: ["Bruttomarge", "Rohertrag", "Marge"],
+      match: ["Bruttomarge", "Rohertrag", "Marge", "Zusatzgewinn"],
       plain: "Was vom Umsatz übrig bleibt, nachdem die direkten Kosten der Leistung bezahlt sind. Die Marge ist dieser Anteil in Prozent; der Rohertrag ist der Betrag in Euro.",
       example: "10.000 € Umsatz bei 35 % Marge sind 3.500 € Rohertrag.",
+    },
+  },
+  {
+    id: "break-even",
+    title: "Break-even",
+    match: ["break-even", "breaks even", "the cost to beat"],
+    plain: "The point where what something earns is exactly what it costs. Below it you lose money, above it you make money.",
+    example: "Tailoring costs €25,000 a year. If it earns €25,000 you are at break-even; €27,000 leaves €2,000.",
+    de: {
+      match: ["Break-even", "die zu schlagenden Kosten"],
+      plain: "Der Punkt, an dem etwas genau so viel einbringt, wie es kostet. Darunter verliert man Geld, darüber verdient man.",
+      example: "Der Zuschnitt kostet 25.000 € im Jahr. Bringt er 25.000 €, sind Sie beim Break-even; 27.000 € lassen 2.000 € übrig.",
     },
   },
   {

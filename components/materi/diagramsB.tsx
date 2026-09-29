@@ -2,7 +2,7 @@
 
 import { useId, useState } from "react";
 import clsx from "clsx";
-import { Insight, Toggles } from "@/components/materi/kit";
+import { Insight, Story, ThePoint, Toggles, useStory } from "@/components/materi/kit";
 import { COST_SHARE_MAX, LEVELS, LEVEL_COST, LEVEL_IDS, POOL_HIGH, POOL_MID, ROLES, SALES_MODELS, TAILOR_SHARE_MAX, abilityBucket, attractBucket, roleOf } from "@/data/route2";
 import type { Bucket, Level, Role, SalesModel } from "@/data/route2";
 import { bi, euro, num, pct, t, tt } from "@/lib/lang";
@@ -43,8 +43,58 @@ export function NineBox() {
   const zoneRole = (a: Bucket, b: Bucket): Role => roleOf(a, b);
   const zoneFill: Record<Role, string> = { core: C.tealSoft, standard: C.mist, deprio: C.paper };
   const count: Record<string, number> = {};
+  const row = (id: string) => rows.find((r) => r.id === id)!;
+  const [h, lg, sc] = [row("hosp"), row("logi"), row("school")];
+  const story = useStory([
+    {
+      title: tt("A lot to win, and we win there", "Viel zu holen, und wir gewinnen dort"),
+      say: tt(
+        `Nordhafen IT, an example company, rates five customer groups on two questions: how much profit is in the group (up), and how often do we win there (right). Hospitals: ${euro(h.pool)} of profit and Nordhafen wins ${pct(h.win)}. Both are good, so this is a core group: put the money here.`,
+        `Nordhafen IT, ein Beispielunternehmen, bewertet fünf Kundengruppen nach zwei Fragen: Wie viel Gewinn steckt in der Gruppe (nach oben), und wie oft gewinnen wir dort (nach rechts)? Krankenhäuser: ${euro(h.pool)} Gewinn, und Nordhafen gewinnt ${pct(h.win)}. Beides ist gut, also ist das eine Kerngruppe: Das Geld gehört hierher.`,
+      ),
+      look: tt("the highlighted circle “Hos”, top middle.", "den markierten Kreis „Kra“ oben in der Mitte."),
+      apply: () => {
+        setZones("on");
+        setSel("hosp");
+      },
+    },
+    {
+      title: tt("A lot to win, but we lose there", "Viel zu holen, aber wir verlieren dort"),
+      say: tt(
+        `Logistics platforms also hold a lot of profit (${euro(lg.pool)}). But Nordhafen wins only ${pct(lg.win)} of its offers there. Tempting, but not now.`,
+        `Logistikplattformen enthalten auch viel Gewinn (${euro(lg.pool)}). Aber Nordhafen gewinnt dort nur ${pct(lg.win)} seiner Angebote. Verlockend, aber nicht jetzt.`,
+      ),
+      look: tt("the highlighted circle top left: much profit, low win rate.", "den markierten Kreis oben links: viel Gewinn, niedrige Win Rate."),
+      apply: () => {
+        setZones("on");
+        setSel("logi");
+      },
+    },
+    {
+      title: tt("The point", "Das Wichtigste"),
+      say: tt(
+        `Schools are the opposite: easy to win (${pct(sc.win)}) but little profit (${euro(sc.pool)}). The point: focus only where both are true, a lot to win and a real chance to win it.`,
+        `Schulen sind das Gegenteil: leicht zu gewinnen (${pct(sc.win)}), aber wenig Gewinn (${euro(sc.pool)}). Das Wichtigste: Fokussieren Sie nur dort, wo beides stimmt, viel zu holen und eine echte Chance, es zu holen.`,
+      ),
+      look: tt("the highlighted circle bottom right.", "den markierten Kreis unten rechts."),
+      apply: () => {
+        setZones("on");
+        setSel("school");
+      },
+    },
+  ]);
+  const pick = (id: string) => {
+    story.leave();
+    setSel(id);
+  };
   return (
     <div className="space-y-3">
+      <ThePoint>
+        {tt(
+          "Put your money into a customer group only when there is a lot to win there and you actually win there. One of the two is not enough.",
+          "Stecken Sie Geld nur dann in eine Kundengruppe, wenn es dort viel zu holen gibt und Sie dort tatsächlich gewinnen. Eines von beiden reicht nicht.",
+        )}
+      </ThePoint>
       <svg viewBox="0 0 560 300" className="mx-auto h-auto w-full max-w-[600px]" role="img" aria-labelledby={`${uid}-t ${uid}-d`}>
         <title id={`${uid}-t`}>{tt("Nordhafen's five segments on attractiveness and ability to win", "Die fünf Segmente von Nordhafen nach Attraktivität und Gewinnfähigkeit")}</title>
         <desc id={`${uid}-d`}>{rows.map((r) => `${r.name}: ${BUCKET()[r.a]} / ${BUCKET()[r.b]} → ${ROLES[r.role].label}`).join(". ")}</desc>
@@ -72,21 +122,28 @@ export function NineBox() {
           const y = cellY(r.a) + 48;
           const on = r.id === sel;
           return (
-            <g key={r.id} className="hit" role="button" tabIndex={0} aria-label={r.name} onClick={() => setSel(r.id)} onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && setSel(r.id)}>
+            <g key={r.id} className="hit" role="button" tabIndex={0} aria-label={r.name} onClick={() => pick(r.id)} onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && pick(r.id)}>
               <circle className="hit-shape" cx={x} cy={y} r={on ? 17 : 14} fill={on ? C.soft : C.paper} stroke={on ? C.amber : C.ink} strokeWidth={on ? 3 : 1.6} />
               <text x={x} y={y + 4} textAnchor="middle" fontSize="11" fontWeight="700" fill={C.ink}>{r.name.slice(0, 3)}</text>
             </g>
           );
         })}
       </svg>
+      <Story steps={story.plan} step={story.step} onStep={story.go} />
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="space-y-1.5">
           <p className="smallcaps">{tt("Read one segment", "Ein Segment lesen")}</p>
-          <Toggles<string> label={tt("Segment", "Segment")} value={sel} onChange={setSel} options={rows.map((r) => ({ id: r.id, label: r.name }))} />
+          <Toggles<string> label={tt("Segment", "Segment")} value={sel} onChange={pick} options={rows.map((r) => ({ id: r.id, label: r.name }))} />
         </div>
         <div className="space-y-1.5">
           <p className="smallcaps">{tt("Role zones", "Rollenzonen")}</p>
-          <Toggles<"on" | "off"> label={tt("Zones", "Zonen")} value={zones} onChange={setZones} options={[{ id: "on", label: tt("Show the role rule", "Rollenregel zeigen") }, { id: "off", label: tt("Hide", "Ausblenden") }]} />
+          <Toggles<"on" | "off">
+            label={tt("Zones", "Zonen")}
+            value={zones}
+            onChange={(v) => {
+              story.leave();
+              setZones(v);
+            }} options={[{ id: "on", label: tt("Show the role rule", "Rollenregel zeigen") }, { id: "off", label: tt("Hide", "Ausblenden") }]} />
         </div>
       </div>
       <div className="rounded-lg border border-line bg-paper p-3.5 text-caption" aria-live="polite">
@@ -128,8 +185,49 @@ export function SalesModelCost() {
   });
   const X = (s: number) => 150 + (Math.min(s, 120) / 120) * 380;
   const pass = rows.filter((r) => r.share <= COST_SHARE_MAX);
+  const costAt = (m: SalesModel, v: number) => (m === "partner" ? v * (SALES_MODELS.partner.share / 100) : SALES_MODELS[m].cost);
+  const passAt = (v: number) => MODELS.filter((m) => (costAt(m, v) / v) * 100 <= COST_SHARE_MAX).map((m) => SALES_MODELS[m].name).join(", ");
+  const story = useStory([
+    {
+      title: tt("A big contract can pay for a person", "Ein großer Vertrag kann eine Person bezahlen"),
+      say: tt(
+        `Nordhafen IT, an example company, uses a simple rule: winning a contract may cost at most ${COST_SHARE_MAX}% of what the contract brings in its first year. A big contract of ${euro(75000)} can easily pay for a personal key account team (${euro(costAt("key", 75000))}).`,
+        `Nordhafen IT, ein Beispielunternehmen, nutzt eine einfache Regel: Einen Vertrag zu gewinnen darf höchstens ${COST_SHARE_MAX} % dessen kosten, was der Vertrag im ersten Jahr bringt. Ein großer Vertrag über ${euro(75000)} kann locker ein persönliches Key-Account-Team bezahlen (${euro(costAt("key", 75000))}).`,
+      ),
+      look: tt("all bars end left of the dashed line.", "alle Balken enden links der gestrichelten Linie."),
+      apply: () => setAcv(75000),
+    },
+    {
+      title: tt("A small contract cannot", "Ein kleiner Vertrag kann das nicht"),
+      say: tt(
+        `A small contract of ${euro(10000)} cannot: one visit by a seller (${euro(costAt("field", 10000))}) would eat the whole contract. Only these stay under the line: ${passAt(10000)}.`,
+        `Ein kleiner Vertrag über ${euro(10000)} kann das nicht: Ein Besuch des Außendienstes (${euro(costAt("field", 10000))}) würde den ganzen Vertrag auffressen. Nur diese bleiben unter der Linie: ${passAt(10000)}.`,
+      ),
+      look: tt("the striped bars cross the dashed line.", "die schraffierten Balken überschreiten die gestrichelte Linie."),
+      apply: () => setAcv(10000),
+    },
+    {
+      title: tt("The point", "Das Wichtigste"),
+      say: tt(
+        "The size of the contract decides how you can afford to sell. Big contracts: a person who visits. Small contracts: by phone, online or through partners, with a standard offer.",
+        "Die Größe des Vertrags entscheidet, wie Sie sich den Verkauf leisten können. Große Verträge: eine Person, die besucht. Kleine Verträge: per Telefon, online oder über Partner, mit einem Standardangebot.",
+      ),
+      look: tt("move the slider below and watch the bars cross the line.", "bewegen Sie den Regler unten und sehen Sie, wie die Balken die Linie kreuzen."),
+      apply: () => setAcv(10000),
+    },
+  ]);
+  const pickAcv = (v: number) => {
+    story.leave();
+    setAcv(v);
+  };
   return (
     <div className="space-y-3">
+      <ThePoint>
+        {tt(
+          "How you sell must fit what a contract is worth. A big contract can pay for a personal visit; a small one can only pay for selling by phone, online or through partners.",
+          "Wie Sie verkaufen, muss zu dem passen, was ein Vertrag wert ist. Ein großer Vertrag kann einen persönlichen Besuch bezahlen; ein kleiner nur den Verkauf per Telefon, online oder über Partner.",
+        )}
+      </ThePoint>
       <svg viewBox="0 0 560 250" className="mx-auto h-auto w-full max-w-[600px]" role="img" aria-labelledby={`${uid}-t ${uid}-d`}>
         <title id={`${uid}-t`}>{tt("Cost of winning one deal, as a share of its first-year contract value", "Kosten für einen gewonnenen Deal, als Anteil am Erstjahres-Vertragswert")}</title>
         <desc id={`${uid}-d`}>{rows.map((r) => `${SALES_MODELS[r.m].name}: ${num(Math.round(r.share))}%`).join(". ")}</desc>
@@ -153,12 +251,13 @@ export function SalesModelCost() {
         <line x1={X(COST_SHARE_MAX)} x2={X(COST_SHARE_MAX)} y1="6" y2="222" stroke={C.ink} strokeWidth="2" strokeDasharray="5 4" />
         <text x={X(COST_SHARE_MAX)} y="238" textAnchor="middle" fontSize="11.5" fontWeight="700" fill={C.ink}>{tt(`limit ${COST_SHARE_MAX}% of contract value`, `Grenze ${COST_SHARE_MAX} % des Vertragswerts`)}</text>
       </svg>
+      <Story steps={story.plan} step={story.step} onStep={story.go} />
       <div className="space-y-1.5">
         <label htmlFor={`${uid}-acv`} className="smallcaps block">
           {tt(`First-year contract value of one deal: ${euro(acv)}`, `Erstjahres-Vertragswert eines Deals: ${euro(acv)}`)}
         </label>
-        <input id={`${uid}-acv`} type="range" min={5000} max={100000} step={5000} value={acv} onChange={(e) => setAcv(Number(e.target.value))} className="range-accent" />
-        <Toggles<string> label={tt("Presets", "Voreinstellungen")} value={String(acv)} onChange={(v) => setAcv(Number(v))} options={[10000, 30000, 75000].map((v) => ({ id: String(v), label: euro(v) }))} />
+        <input id={`${uid}-acv`} type="range" min={5000} max={100000} step={5000} value={acv} onChange={(e) => pickAcv(Number(e.target.value))} className="range-accent" />
+        <Toggles<string> label={tt("Presets", "Voreinstellungen")} value={String(acv)} onChange={(v) => pickAcv(Number(v))} options={[10000, 30000, 75000].map((v) => ({ id: String(v), label: euro(v) }))} />
       </div>
       <Insight>
         {tt(
@@ -188,15 +287,67 @@ export function TailorGridExample() {
   const uid = useId().replace(/:/g, "");
   const [seg, setSeg] = useState<"hosp" | "law">("hosp");
   const [grid, setGrid] = useState<Record<string, Level>>({ platform: "std", contract: "ind", onboarding: "mod", pricing: "std", content: "mod" });
-  const cycle = (id: string) => setGrid((g) => ({ ...g, [id]: LEVEL_IDS[(LEVEL_IDS.indexOf(g[id]) + 1) % 3] }));
+  const cycle = (id: string) => {
+    story.leave();
+    setGrid((g) => ({ ...g, [id]: LEVEL_IDS[(LEVEL_IDS.indexOf(g[id]) + 1) % 3] }));
+  };
   const s = T_SEGS[seg];
   const margin = s.acv * (s.margin / 100);
   const limit = margin * (TAILOR_SHARE_MAX / 100);
   const cost = T_ELEMENTS.reduce((sum, e) => sum + LEVEL_COST[grid[e.id]], 0);
   const X = (v: number) => 20 + (Math.min(v, 14000) / 14000) * 520;
   const platformBad = grid.platform !== "std";
+  const G0: Record<string, Level> = { platform: "std", contract: "ind", onboarding: "mod", pricing: "std", content: "mod" };
+  const G1: Record<string, Level> = { ...G0, contract: "mod" };
+  const costOf = (g: Record<string, Level>) => T_ELEMENTS.reduce((sum, e) => sum + LEVEL_COST[g[e.id]], 0);
+  const limitOf = (k: "hosp" | "law") => T_SEGS[k].acv * (T_SEGS[k].margin / 100) * (TAILOR_SHARE_MAX / 100);
+  const story = useStory([
+    {
+      title: tt("A big customer can carry extras", "Ein großer Kunde trägt Extras"),
+      say: tt(
+        `Nordhafen IT, an example company, decides for each part of its offer: the same for all, pick from ready blocks, or made just for this customer (the most expensive). A hospital brings a lot of profit, so extras may cost up to ${euro(limitOf("hosp"))} a year. This mix costs ${euro(costOf(G0))}: it fits.`,
+        `Nordhafen IT, ein Beispielunternehmen, entscheidet für jeden Teil seines Angebots: für alle gleich, aus fertigen Bausteinen wählen oder nur für diesen Kunden gemacht (am teuersten). Ein Krankenhaus bringt viel Gewinn, also dürfen Extras bis zu ${euro(limitOf("hosp"))} im Jahr kosten. Diese Mischung kostet ${euro(costOf(G0))}: Sie passt.`,
+      ),
+      look: tt("the bar ends before the limit line.", "der Balken endet vor der Grenzlinie."),
+      apply: () => {
+        setSeg("hosp");
+        setGrid(G0);
+      },
+    },
+    {
+      title: tt("A small customer cannot", "Ein kleiner Kunde kann das nicht"),
+      say: tt(
+        `A law firm brings far less, so extras may cost only ${euro(limitOf("law"))}. The same mix costs ${euro(costOf(G0))}: far too much. The one part made just for them (the contract) breaks it.`,
+        `Eine Kanzlei bringt viel weniger, also dürfen Extras nur ${euro(limitOf("law"))} kosten. Dieselbe Mischung kostet ${euro(costOf(G0))}: viel zu viel. Der eine Teil, der nur für sie gemacht ist (der Vertrag), sprengt es.`,
+      ),
+      look: tt("the striped part is over the limit.", "der schraffierte Teil liegt über der Grenze."),
+      apply: () => {
+        setSeg("law");
+        setGrid(G0);
+      },
+    },
+    {
+      title: tt("The point", "Das Wichtigste"),
+      say: tt(
+        `Make the contract a ready block instead: now it costs ${euro(costOf(G1))} and fits. The point: the smaller the customer, the more of the offer must be the same for everyone. Make things just for one customer only where the customer is big.`,
+        `Machen Sie den Vertrag stattdessen zu einem fertigen Baustein: Jetzt kostet es ${euro(costOf(G1))} und passt. Das Wichtigste: Je kleiner der Kunde, desto mehr vom Angebot muss für alle gleich sein. Machen Sie nur bei großen Kunden etwas eigens für einen Kunden.`,
+      ),
+      look: tt("the contract row now says Modular, and the bar fits.", "die Vertragszeile zeigt jetzt Modular, und der Balken passt."),
+      apply: () => {
+        setSeg("law");
+        setGrid(G1);
+      },
+    },
+  ]);
   return (
     <div className="space-y-3">
+      <ThePoint>
+        {tt(
+          "Making a part of the offer just for one customer costs money every year. Big customers can carry that; small customers need an offer that is mostly the same for everyone.",
+          "Einen Teil des Angebots nur für einen Kunden zu machen, kostet jedes Jahr Geld. Große Kunden können das tragen; kleine Kunden brauchen ein Angebot, das größtenteils für alle gleich ist.",
+        )}
+      </ThePoint>
+      <Story steps={story.plan} step={story.step} onStep={story.go} />
       <div className="relative overflow-x-auto rounded-lg border border-line">
         <table className="w-full min-w-[30rem] border-collapse text-caption">
           <caption className="sr-only">{tt("Five offer elements, each standard, modular or individual", "Fünf Angebotselemente, je Standard, modular oder individuell")}</caption>
@@ -242,7 +393,13 @@ export function TailorGridExample() {
       </svg>
       <div className="space-y-1.5">
         <p className="smallcaps">{tt("Nordhafen segment", "Segment von Nordhafen")}</p>
-        <Toggles<"hosp" | "law"> label={tt("Segment", "Segment")} value={seg} onChange={setSeg} options={[{ id: "hosp", label: `${T_SEGS.hosp.name} · ${euro(T_SEGS.hosp.acv)}` }, { id: "law", label: `${T_SEGS.law.name} · ${euro(T_SEGS.law.acv)}` }]} />
+        <Toggles<"hosp" | "law">
+          label={tt("Segment", "Segment")}
+          value={seg}
+          onChange={(v) => {
+            story.leave();
+            setSeg(v);
+          }} options={[{ id: "hosp", label: `${T_SEGS.hosp.name} · ${euro(T_SEGS.hosp.acv)}` }, { id: "law", label: `${T_SEGS.law.name} · ${euro(T_SEGS.law.acv)}` }]} />
       </div>
       <Insight>
         {tt(
@@ -272,8 +429,54 @@ export function RegretTable() {
   const bestEv = strats.reduce((a, b) => (ev(b) > ev(a) ? b : a));
   const minReg = strats.reduce((a, b) => (maxReg(b) < maxReg(a) ? b : a));
   const cols = [tt("as big as assumed", "so groß wie angenommen"), tt("a third smaller", "ein Drittel kleiner"), tt("half as big", "halb so groß")];
+  const k = (v: number) => euro(v * 1000);
+  const story = useStory([
+    {
+      title: tt("Go all in: best if you are right", "Alles setzen: am besten, wenn Sie recht haben"),
+      say: tt(
+        `Nordhafen IT, an example company, must decide before it knows how big a new customer group really is. Going all in earns the most if the group is as big as hoped: ${k(PAY.focus[0])}. But if it is only half as big, it earns just ${k(PAY.focus[2])}.`,
+        `Nordhafen IT, ein Beispielunternehmen, muss entscheiden, bevor es weiß, wie groß eine neue Kundengruppe wirklich ist. Alles zu setzen bringt am meisten, wenn die Gruppe so groß ist wie erhofft: ${k(PAY.focus[0])}. Ist sie aber nur halb so groß, bringt es nur ${k(PAY.focus[2])}.`,
+      ),
+      look: tt("the first row of the table.", "die erste Zeile der Tabelle."),
+      apply: () => {
+        setView("net");
+        setQ(40);
+      },
+    },
+    {
+      title: tt("Step by step: never far off", "Schritt für Schritt: nie weit daneben"),
+      say: tt(
+        `Going step by step earns a bit less in the best case (${k(PAY.stage[0])}) but never falls far: at worst ${k(PAY.stage[2])}. Waiting looks safe, but it earns the least whenever the group is real (${k(PAY.wait[0])}).`,
+        `Schritt für Schritt bringt im besten Fall etwas weniger (${k(PAY.stage[0])}), fällt aber nie tief: im schlechtesten Fall ${k(PAY.stage[2])}. Warten wirkt sicher, bringt aber am wenigsten, wann immer die Gruppe echt ist (${k(PAY.wait[0])}).`,
+      ),
+      look: tt("compare the middle row with the other two.", "vergleichen Sie die mittlere Zeile mit den anderen beiden."),
+      apply: () => {
+        setView("net");
+        setQ(40);
+      },
+    },
+    {
+      title: tt("The point", "Das Wichtigste"),
+      say: tt(
+        "When you are not sure, do not wait and do not bet everything. Decide now, start small, and agree in advance on a number and a date at which you check whether to go further.",
+        "Wenn Sie unsicher sind, warten Sie nicht und setzen Sie nicht alles. Entscheiden Sie jetzt, starten Sie klein und vereinbaren Sie vorher eine Zahl und ein Datum, an dem Sie prüfen, ob Sie weitergehen.",
+      ),
+      look: tt("“Regret” shows how much each choice could miss; step by step misses least.", "„Bedauern“ zeigt, wie viel jede Wahl verpassen könnte; Schritt für Schritt verpasst am wenigsten."),
+      apply: () => {
+        setView("regret");
+        setQ(40);
+      },
+    },
+  ]);
   return (
     <div className="space-y-3">
+      <ThePoint>
+        {tt(
+          "When the data is incomplete, waiting is also a decision, and usually a costly one. Decide now, go step by step, and set a clear point at which you check.",
+          "Wenn die Daten unvollständig sind, ist Warten auch eine Entscheidung, meist eine teure. Entscheiden Sie jetzt, gehen Sie Schritt für Schritt und legen Sie einen klaren Prüfpunkt fest.",
+        )}
+      </ThePoint>
+      <Story steps={story.plan} step={story.step} onStep={story.go} />
       <div className="relative overflow-x-auto rounded-lg border border-line">
         <table className="w-full min-w-[34rem] border-collapse text-caption">
           <caption className="sr-only">{tt("Gross profit over two years in thousands of euros for three strategies and three segment sizes", "Rohertrag über zwei Jahre in Tausend Euro für drei Strategien und drei Segmentgrößen")}</caption>
@@ -307,13 +510,19 @@ export function RegretTable() {
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="space-y-1.5">
           <p className="smallcaps">{tt("Show", "Zeigen")}</p>
-          <Toggles<"net" | "regret"> label={tt("View", "Ansicht")} value={view} onChange={setView} options={[{ id: "net", label: tt("Result (€k)", "Ergebnis (T€)") }, { id: "regret", label: tt("Regret (€k)", "Bedauern (T€)") }]} />
+          <Toggles<"net" | "regret">
+            label={tt("View", "Ansicht")}
+            value={view}
+            onChange={(v) => {
+              story.leave();
+              setView(v);
+            }} options={[{ id: "net", label: tt("Result (€k)", "Ergebnis (T€)") }, { id: "regret", label: tt("Regret (€k)", "Bedauern (T€)") }]} />
         </div>
         <div className="space-y-1.5">
           <label htmlFor={`${uid}-q`} className="smallcaps block">
             {tt(`Your estimate: chance the segment is smaller than assumed · ${q}%`, `Ihre Schätzung: Wahrscheinlichkeit, dass das Segment kleiner ist als angenommen · ${q} %`)}
           </label>
-          <input id={`${uid}-q`} type="range" min={0} max={100} step={10} value={q} onChange={(e) => setQ(Number(e.target.value))} className="range-accent" />
+          <input id={`${uid}-q`} type="range" min={0} max={100} step={10} value={q} onChange={(e) => { story.leave(); setQ(Number(e.target.value)); }} className="range-accent" />
         </div>
       </div>
       <Insight>
@@ -341,8 +550,47 @@ export function ArchExample() {
   const [sel, setSel] = useState("data");
   const r = N_ARCH.find((x) => x.id === sel)!;
   const X = (m: number) => 190 + (m - 1) * 60;
+  const story = useStory([
+    {
+      title: tt("First: measure where you start", "Zuerst: messen, wo Sie starten"),
+      say: tt(
+        "Nordhafen IT, an example company, puts four projects on a six-month plan. The first one, in month 1, simply records which customer is in which group. Without it, nobody could later see whether anything worked.",
+        "Nordhafen IT, ein Beispielunternehmen, legt vier Projekte auf einen Sechsmonatsplan. Das erste, in Monat 1, hält einfach fest, welcher Kunde in welcher Gruppe ist. Ohne das könnte später niemand sehen, ob etwas gewirkt hat.",
+      ),
+      look: tt("the top row starts in M1.", "die oberste Zeile startet in M1."),
+      apply: () => setSel("data"),
+    },
+    {
+      title: tt("Then: in the order they need each other", "Dann: in der Reihenfolge, in der sie einander brauchen"),
+      say: tt(
+        "The new key account manager for hospitals starts in month 3, after the evidence pack for hospitals is ready, so she can sell with it from her first day.",
+        "Die neue Key Account Managerin für Kliniken startet in Monat 3, nachdem das Nachweispaket für Kliniken fertig ist, damit sie vom ersten Tag an damit verkaufen kann.",
+      ),
+      look: tt("the bottom row starts later than the pack above it.", "die unterste Zeile startet später als das Paket darüber."),
+      apply: () => setSel("kam"),
+    },
+    {
+      title: tt("The point", "Das Wichtigste"),
+      say: tt(
+        "A plan is more than a list: start with what the others need, give each project one person in charge, and set a check with a number and a date (“if the hospital win rate is below 22% in month 5, review”).",
+        "Ein Plan ist mehr als eine Liste: Beginnen Sie mit dem, was die anderen brauchen, geben Sie jedem Projekt eine verantwortliche Person und legen Sie eine Prüfung mit Zahl und Datum fest („liegt die Win Rate bei Kliniken in Monat 5 unter 22 %, überprüfen“).",
+      ),
+      look: tt("the box below: owner and trigger of the selected project.", "das Feld unten: Owner und Trigger des gewählten Projekts."),
+      apply: () => setSel("kam"),
+    },
+  ]);
+  const pick = (id: string) => {
+    story.leave();
+    setSel(id);
+  };
   return (
     <div className="space-y-3">
+      <ThePoint>
+        {tt(
+          "A good plan says what starts first, who is in charge of each part, and when you check whether it works. Start with the part the others depend on.",
+          "Ein guter Plan sagt, was zuerst startet, wer für jeden Teil verantwortlich ist und wann Sie prüfen, ob es wirkt. Beginnen Sie mit dem Teil, von dem die anderen abhängen.",
+        )}
+      </ThePoint>
       <svg viewBox="0 0 560 210" className="mx-auto h-auto w-full max-w-[600px]" role="img" aria-labelledby={`${uid}-t ${uid}-d`}>
         <title id={`${uid}-t`}>{tt("Nordhafen's four funded items by start month", "Die vier finanzierten Punkte von Nordhafen nach Startmonat")}</title>
         <desc id={`${uid}-d`}>{N_ARCH.map((a) => tt(`${a.name}: month ${a.start}, owner ${a.owner}`, `${a.name}: Monat ${a.start}, Owner ${a.owner}`)).join(". ")}</desc>
@@ -353,7 +601,7 @@ export function ArchExample() {
           const y = 24 + i * 42;
           const on = a.id === sel;
           return (
-            <g key={a.id} className="hit" role="button" tabIndex={0} aria-label={a.name} onClick={() => setSel(a.id)} onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && setSel(a.id)}>
+            <g key={a.id} className="hit" role="button" tabIndex={0} aria-label={a.name} onClick={() => pick(a.id)} onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && pick(a.id)}>
               <text x="4" y={y + 22} fontSize="12" fontWeight={on ? 800 : 600} fill={C.ink}>{a.name.length > 28 ? `${a.name.slice(0, 27)}…` : a.name}</text>
               {[1, 2, 3, 4, 5, 6].map((m) => (
                 <rect key={m} className={m === a.start ? "hit-shape" : undefined} x={X(m) + 2} y={y + 6} width="56" height="24" rx="3" fill={m === a.start ? C.data : m > a.start ? C.tealSoft : C.paper} stroke={on && m === a.start ? C.amber : C.line} strokeWidth={on && m === a.start ? 2.5 : 1} />
@@ -363,9 +611,10 @@ export function ArchExample() {
         })}
         <text x="4" y="204" fontSize="11.5" fill={C.ash}>{tt("dark = start month · pale = running", "dunkel = Startmonat · hell = läuft")}</text>
       </svg>
+      <Story steps={story.plan} step={story.step} onStep={story.go} />
       <div className="space-y-1.5">
         <p className="smallcaps">{tt("Read one item", "Einen Punkt lesen")}</p>
-        <Toggles<string> label={tt("Item", "Punkt")} value={sel} onChange={setSel} options={N_ARCH.map((a) => ({ id: a.id, label: a.name }))} />
+        <Toggles<string> label={tt("Item", "Punkt")} value={sel} onChange={pick} options={N_ARCH.map((a) => ({ id: a.id, label: a.name }))} />
       </div>
       <div className="rounded-lg border border-line bg-paper p-3.5 text-caption" aria-live="polite">
         <p className="smallcaps">{r.name}</p>
