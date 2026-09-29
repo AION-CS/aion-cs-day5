@@ -18,6 +18,8 @@ export type CrmField = {
   id: FieldId;
   /** The CRM field as printed. */
   text: string;
+  /** The decisive phrase inside `text`, underlined by "Highlight the key words". An exact substring of the item's own text. */
+  key: string;
   truth: CritTag;
   /** One question that teaches how to test the item. Shown for every item at once, never only the wrong ones. */
   clue: string;
@@ -31,6 +33,7 @@ export const FIELDS: CrmField[] = bi([
   {
     id: "nace" as FieldId,
     text: t("Industry code (NACE): 49.41, road freight transport", "Branchencode (NACE): 49.41, Güterbeförderung im Straßenverkehr"),
+    key: t("Industry code (NACE)", "Branchencode (NACE)"),
     truth: "firmo" as CritTag,
     clue: t("Could you look this up in a company register without ever speaking to the account?", "Könnten Sie das in einem Handelsregister nachschlagen, ohne je mit dem Account zu sprechen?"),
     why: t("An industry code is a registered fact about the company. It describes what the firm is, not what it did or needs.", "Ein Branchencode ist eine registrierte Tatsache über das Unternehmen. Er beschreibt, was die Firma ist, nicht was sie getan hat oder braucht."),
@@ -42,6 +45,7 @@ export const FIELDS: CrmField[] = bi([
   {
     id: "staff" as FieldId,
     text: t("Employees: 380", "Mitarbeitende: 380"),
+    key: t("Employees", "Mitarbeitende"),
     truth: "firmo" as CritTag,
     clue: t("Is this a property of the company, or something it did or needs?", "Ist das eine Eigenschaft des Unternehmens, oder etwas, das es getan hat oder braucht?"),
     why: t("Company size is the classic firmographic criterion. It is easy to get and says little about what the account needs.", "Die Unternehmensgröße ist das klassische firmografische Kriterium. Sie ist leicht zu bekommen und sagt wenig darüber, was der Account braucht."),
@@ -50,6 +54,7 @@ export const FIELDS: CrmField[] = bi([
   {
     id: "hq" as FieldId,
     text: t("Head office: Bremen", "Hauptsitz: Bremen"),
+    key: t("Head office", "Hauptsitz"),
     truth: "firmo" as CritTag,
     clue: t("Could a data provider sell you this field for any company in Germany?", "Könnte ein Datenanbieter Ihnen dieses Feld für jedes Unternehmen in Deutschland verkaufen?"),
     why: t("Location is a geographic, firmographic fact. It matters for sales territories, rarely for the offer.", "Der Standort ist eine geografische, firmografische Tatsache. Er zählt für Vertriebsgebiete, selten für das Angebot."),
@@ -58,6 +63,7 @@ export const FIELDS: CrmField[] = bi([
   {
     id: "tickets" as FieldId,
     text: t("Opened 3 support tickets about restoring backups in the last quarter", "Hat im letzten Quartal 3 Support-Tickets zur Wiederherstellung von Backups eröffnet"),
+    key: t("Opened 3 support tickets", "3 Support-Tickets"),
     truth: "behaviour" as CritTag,
     clue: t("Is this something you observed in your own systems, or the reason behind it?", "Ist das etwas, das Sie in Ihren eigenen Systemen beobachtet haben, oder der Grund dahinter?"),
     why: t("Tickets are recorded actions. They hint at a need (reliable restores) but the field itself is what the account did.", "Tickets sind aufgezeichnete Handlungen. Sie deuten auf einen Bedarf hin (verlässliche Wiederherstellung), aber das Feld selbst ist das, was der Account getan hat."),
@@ -66,6 +72,7 @@ export const FIELDS: CrmField[] = bi([
   {
     id: "renewal" as FieldId,
     text: t("Buys extra storage only at contract renewal, never in between", "Kauft zusätzlichen Speicher nur bei der Vertragsverlängerung, nie dazwischen"),
+    key: t("only at contract renewal, never in between", "nur bei der Vertragsverlängerung, nie dazwischen"),
     truth: "behaviour" as CritTag,
     clue: t("Would you find this in the order history?", "Würden Sie das in der Bestellhistorie finden?"),
     why: t("A buying pattern read from orders is behaviour. Why the account buys that way is a separate question.", "Ein Kaufmuster aus den Bestellungen ist Verhalten. Warum der Account so kauft, ist eine andere Frage."),
@@ -74,6 +81,7 @@ export const FIELDS: CrmField[] = bi([
   {
     id: "download" as FieldId,
     text: t("Downloaded the migration checklist twice in one week", "Hat die Migrations-Checkliste zweimal in einer Woche heruntergeladen"),
+    key: t("Downloaded the migration checklist", "Migrations-Checkliste zweimal in einer Woche heruntergeladen"),
     truth: "behaviour" as CritTag,
     clue: t("Is this a recorded action or a stated obligation?", "Ist das eine aufgezeichnete Handlung oder eine genannte Pflicht?"),
     why: t("A download is a digital trace of what someone did. It can signal interest, not a need the account has named.", "Ein Download ist eine digitale Spur dessen, was jemand getan hat. Er kann Interesse anzeigen, aber keinen Bedarf, den der Account benannt hat."),
@@ -82,6 +90,7 @@ export const FIELDS: CrmField[] = bi([
   {
     id: "audit" as FieldId,
     text: t("Must prove to its auditor that customer data never leaves Germany", "Muss seinem Wirtschaftsprüfer nachweisen, dass Kundendaten Deutschland nie verlassen"),
+    key: t("Must prove to its auditor", "Muss seinem Wirtschaftsprüfer nachweisen"),
     truth: "need" as CritTag,
     clue: t("Is this a duty the account has to meet, whatever it did so far?", "Ist das eine Pflicht, die der Account erfüllen muss, egal was er bisher getan hat?"),
     why: t("An obligation towards an auditor is a need. It decides what offer can work, and it holds before any contact with you.", "Eine Pflicht gegenüber einem Prüfer ist ein Bedarf. Sie entscheidet, welches Angebot funktionieren kann, und gilt schon vor jedem Kontakt mit Ihnen."),
@@ -90,6 +99,7 @@ export const FIELDS: CrmField[] = bi([
   {
     id: "runit" as FieldId,
     text: t("Has no in-house engineer and wants the service run for it", "Hat keinen eigenen Engineer und will, dass der Service für ihn betrieben wird"),
+    key: t("wants the service run for it", "will, dass der Service für ihn betrieben wird"),
     truth: "need" as CritTag,
     clue: t("Does this describe what the account did, or what it has to have solved?", "Beschreibt das, was der Account getan hat, oder was er gelöst haben muss?"),
     why: t("The missing capacity and the wish to have it run are the problem the account must solve. That is a need.", "Die fehlende Kapazität und der Wunsch, es betreiben zu lassen, sind das Problem, das der Account lösen muss. Das ist ein Bedarf."),
@@ -98,6 +108,7 @@ export const FIELDS: CrmField[] = bi([
   {
     id: "peak" as FieldId,
     text: t("Needs capacity that doubles for four weeks around the year-end close", "Braucht Kapazität, die sich für vier Wochen rund um den Jahresabschluss verdoppelt"),
+    key: t("Needs capacity that doubles", "Braucht Kapazität"),
     truth: "need" as CritTag,
     clue: t("Is this a requirement the service has to meet, or a trace of past activity?", "Ist das eine Anforderung an den Service, oder eine Spur früherer Aktivität?"),
     why: t("A capacity requirement is a need. It tells you which offer fits (flexible capacity), whatever the account's size.", "Eine Kapazitätsanforderung ist ein Bedarf. Sie sagt Ihnen, welches Angebot passt (flexible Kapazität), unabhängig von der Größe des Accounts."),

@@ -3,6 +3,8 @@
 import clsx from "clsx";
 import { Toggles } from "@/components/materi/kit";
 import { AnswerBlock } from "@/components/ui/AnswerBlock";
+import { BlockMissing } from "@/components/ui/BlockMissing";
+import { ExampleAnswer } from "@/components/ui/ExampleAnswer";
 import { AnswerKey } from "@/components/ui/AnswerKey";
 import { BudgetBar } from "@/components/ui/BudgetBar";
 import { Field } from "@/components/ui/Field";
@@ -44,6 +46,7 @@ export function Block21() {
       title={tt("Block 2.1 · Assign the twelve accounts to a segment", "Block 2.1 · Die zwölf Accounts einem Segment zuordnen")}
       kind="OBJECTIVE"
       minutes={BLOCK_MINUTES["2.1"]}
+      core={true}
       findIt={tt(
         "Route 1 → Task 1 → the twelve accounts on the board below, each with its account manager's note. Find the phrase that decides each note and answer on the board.",
         "Route 1 → Task 1 → die zwölf Accounts auf der Tafel unten, jeder mit der Notiz seines Account Managers. Finden Sie die Wendung, die jede Notiz entscheidet, und antworten Sie auf der Tafel.",
@@ -60,6 +63,7 @@ export function Block21() {
         undoCount={l1.assignHistory.length}
         redoCount={l1.assignFuture.length}
         domId={IDS.account}
+        keyPhrases={Object.fromEntries(ACCOUNTS.map((a) => [a.id, a.key]))}
         clues={Object.fromEntries(ACCOUNTS.map((a) => [a.id, a.clue]))}
         reasons={Object.fromEntries(ACCOUNTS.map((a) => [a.id, a.why]))}
         result={l1.assignResult}
@@ -103,6 +107,7 @@ export function Block21() {
         <Gloss>{tt("C5, KRITIS, NIS2, BaFin, audit rights, sub-processor, SLA, managed service, API, Terraform, proof of concept, hyperscaler, vCPU, autoscaling, DevOps, Ausschreibung.", "C5, KRITIS, NIS2, BaFin, Prüfrechte, Unterauftragsverarbeiter, SLA, Managed Service, API, Terraform, Proof of Concept, Hyperscaler, vCPU, Autoscaling, DevOps, Ausschreibung.")}</Gloss>
       </p>
       <AnswerKey block={assignKey()} />
+      <BlockMissing block="2.1" route={1} />
     </AnswerBlock>
   );
 }
@@ -132,6 +137,7 @@ export function Block22() {
       title={tt("Block 2.2 · Profile each segment, rate its value, name the gaps", "Block 2.2 · Jedes Segment beschreiben, seinen Wert bewerten, die Lücken benennen")}
       kind="OBJECTIVE + JUDGED"
       minutes={BLOCK_MINUTES["2.2"]}
+      core={false}
       findIt={tt(
         "Route 1 → Task 1 → “Your tally” directly below: it adds up your own assignment from Block 2.1. Answer in the three segment rows and the two fields under them.",
         "Route 1 → Task 1 → „Ihre Auszählung“ direkt darunter: Sie summiert Ihre eigene Zuordnung aus Block 2.1. Antworten Sie in den drei Segmentzeilen und den zwei Feldern darunter.",
@@ -215,6 +221,7 @@ export function Block22() {
                   </div>
                 </div>
               </Field>
+              <ExampleAnswer id={`profile-${s}-example`} guide={profileGuide(s)} />
               {mentor && <MentorGuide guide={profileGuide(s)} />}
             </div>
           );
@@ -268,8 +275,10 @@ export function Block22() {
           min={20}
           rows={2}
         />
+        <ExampleAnswer id="risk-text-example" guide={riskTextGuide()} />
         {mentor && <MentorGuide guide={riskTextGuide()} />}
       </div>
+      <BlockMissing block="2.2" route={1} />
     </AnswerBlock>
   );
 }
@@ -324,6 +333,7 @@ export function Block23() {
       title={tt("Block 2.3 · Choose three measures, score them, put them in order", "Block 2.3 · Drei Maßnahmen wählen, bewerten, in eine Reihenfolge bringen")}
       kind="OBJECTIVE + JUDGED"
       minutes={BLOCK_MINUTES["2.3"]}
+      core={true}
       findIt={tt(
         `Route 1 → Task 1 → “The limits” in the case above (${euro(BUDGET)}, ${MONTHS} months) and the nine measures below. Answer by choosing three and filling their cards.`,
         `Route 1 → Task 1 → „Die Grenzen“ im Fall oben (${euro(BUDGET)}, ${MONTHS} Monate) und die neun Maßnahmen unten. Antworten Sie, indem Sie drei wählen und ihre Karten ausfüllen.`,
@@ -439,6 +449,15 @@ export function Block23() {
                 <p className="smallcaps">{tt("Economic viability (from the cost per account)", "Wirtschaftlichkeit (aus den Kosten pro Account)")}</p>
                 <ScorePick label={tt(`Economic viability of ${m.name}`, `Wirtschaftlichkeit von ${m.name}`)} value={l1.eco[id] || 0} onChange={(v) => setScore("eco", id, v)} flagged={ecoFlagged(id)} />
                 {ecoFlagged(id) && <p className="mt-1 text-micro normal-case tracking-normal text-ink">{tt(`Divide ${euro(m.cost)} by ${m.reach} accounts and read the result against the rule in Materi A7.`, `Teilen Sie ${euro(m.cost)} durch ${m.reach} Accounts und lesen Sie das Ergebnis gegen die Regel in Materi A7.`)}</p>}
+                <div className="mt-1">
+                  <RevealHint id={`eco-${id}-formula`} label={tt("Show the formula", "Formel zeigen")} title={tt("The formula · from Materi A7", "Die Formel · aus Materi A7")}>
+                    <div className="space-y-1.5 text-caption text-ink">
+                      <p>{tt("Cost per account = the measure's cost ÷ the number of accounts it reaches. Both are printed in the header of this card.", "Kosten pro Account = die Kosten der Maßnahme ÷ die Zahl der Accounts, die sie erreicht. Beides steht im Kopf dieser Karte.")}</p>
+                      <p>{EV_RULE.v}</p>
+                      <MaterialRefs refs={["A7"]} lead={tt("Taught in", "Gelehrt in")} />
+                    </div>
+                  </RevealHint>
+                </div>
               </div>
             </div>
             <p className="tnum text-caption text-ink" aria-live="polite">
@@ -538,9 +557,11 @@ export function Block23() {
               ]}
             />
           </TextBox>
+          <ExampleAnswer id="why-example" guide={whyGuide()} />
           {mentor && <MentorGuide guide={whyGuide()} />}
         </div>
       )}
+      <BlockMissing block="2.3" route={1} />
     </AnswerBlock>
   );
 }

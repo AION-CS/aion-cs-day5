@@ -3,6 +3,7 @@
 import { Block31, Block32, Block33, Block34, Block35, Block36 } from "@/components/task2/Blocks";
 import { MemoPanel } from "@/components/task2/MemoPanel";
 import { ExportBar } from "@/components/ui/ExportBar";
+import { OptionalSection } from "@/components/ui/OptionalSection";
 import { Callout } from "@/components/ui/MaterialCard";
 import { MEASURE_BY_ID } from "@/data/measures";
 import { SEGMENTS, SEGMENT_IDS, VALUE_LABEL } from "@/data/segments";
@@ -11,7 +12,7 @@ import { Gloss } from "@/lib/glossify";
 import { euro, tt } from "@/lib/lang";
 import { memoBody } from "@/lib/exportDoc";
 import { r2Missing } from "@/lib/missing";
-import { TASK2_MINUTES } from "@/lib/routes";
+import { BLOCK_MINUTES, TASK2_MINUTES } from "@/lib/routes";
 import { exportName } from "@/lib/slug";
 import { useJumpTo } from "@/lib/useJumpTo";
 import { usePersisted } from "@/store/usePersisted";
@@ -102,10 +103,31 @@ export function Task2() {
       <CaseBrief />
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)]">
         <div className="min-w-0 space-y-6 pb-14 lg:pb-0">
-          <Block31 />
+          <OptionalSection
+            id="block-3-1"
+            title={tt("Block 3.1 · Prioritisation criteria", "Block 3.1 · Priorisierungskriterien")}
+            minutes={BLOCK_MINUTES["3.1"]}
+            reason={tt("Names the criteria behind the ratings; Block 3.2 can rate the segments without a separate ranking of criteria.", "Benennt die Kriterien hinter den Bewertungen; Block 3.2 kann die Segmente auch ohne eine eigene Rangfolge der Kriterien bewerten.")}
+          >
+            <Block31 />
+          </OptionalSection>
           <Block32 />
-          <Block33 />
-          <Block34 />
+          <OptionalSection
+            id="block-3-3"
+            title={tt("Block 3.3 · A sales model per segment", "Block 3.3 · Ein Vertriebsmodell pro Segment")}
+            minutes={BLOCK_MINUTES["3.3"]}
+            reason={tt("Turns the chosen segments into sales models; the measures in Block 3.5 and the decision in Block 3.6 do not require it.", "Macht aus den gewählten Segmenten Vertriebsmodelle; die Maßnahmen in Block 3.5 und die Entscheidung in Block 3.6 setzen es nicht voraus.")}
+          >
+            <Block33 />
+          </OptionalSection>
+          <OptionalSection
+            id="block-3-4"
+            title={tt("Block 3.4 · Standardise or individualise", "Block 3.4 · Standardisieren oder individualisieren")}
+            minutes={BLOCK_MINUTES["3.4"]}
+            reason={tt("A design question on how much of the offer is fixed; the decision in Block 3.6 can be made and defended without it.", "Eine Designfrage dazu, wie viel vom Angebot feststeht; die Entscheidung in Block 3.6 lässt sich auch ohne sie treffen und begründen.")}
+          >
+            <Block34 />
+          </OptionalSection>
           <Block35 />
           <Block36 />
           <ExportBar

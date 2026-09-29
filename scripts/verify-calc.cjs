@@ -120,5 +120,31 @@ for (const l of ["en", "de"]) {
 }
 lang.setCurrentLang("en");
 
+// --- Core / Optional (CLAUDE.md #35), key phrases, example answers ---------------------------------------
+const critData = require("@/data/criteria");
+const guides = require("@/lib/mentorGuide");
+for (const l of ["en", "de"]) {
+  lang.setCurrentLang(l);
+  for (const f of critData.FIELDS) ok(`[${l}] key phrase is in the field (${f.id})`, f.text.includes(f.key));
+  // Core blocks only: the Optional blocks stay empty, and both exports must still be complete.
+  const E1 = store.emptyL1();
+  const E2 = store.emptyR2();
+  const core1 = { ...E1, ...key.KEY_L1(), parts: calc.modelParts(calc.FIGURE_BUILDERS), tg: E1.tg, diff: E1.diff, sketches: E1.sketches, reflect: E1.reflect, profiles: E1.profiles, gaps: E1.gaps, riskText: E1.riskText };
+  const core2 = { ...E2, ...key.KEY_R2(), crits: E2.crits, critText: E2.critText, sales: E2.sales, prop: E2.prop, grid: E2.grid };
+  const pc = { participant: { name: "Core Only" }, ui: { bannerDismissed: {}, sectionsRead: {}, lang: l }, l1: core1, r2: core2 };
+  eq(`[${l}] Core-only fill leaves Route 1 missing list empty`, missing.l1Missing(pc).map((m) => m.label), []);
+  eq(`[${l}] Core-only fill leaves Route 2 missing list empty`, missing.r2Missing(pc).map((m) => m.label), []);
+  const tb = progress.taskBlocks(pc);
+  eq(`[${l}] every Core block complete on a Core-only fill`, Object.entries(tb).filter(([b]) => !progress.isOptionalBlock(b)).every(([, v]) => v), true);
+  const cnt = progress.dossierProgress(pc, 1);
+  ok(`[${l}] Route 1 ring counts Core only (total ${cnt.total})`, cnt.total === 4 + 4);
+  const cnt2 = progress.dossierProgress(pc, 2);
+  ok(`[${l}] Route 2 ring counts Core only (total ${cnt2.total})`, cnt2.total === 3 + 3);
+  // Every fixed-fill guide that shows an example differs from the model answer.
+  const exs = [guides.worthGuide(), guides.sketchGuide(0), guides.sketchGuide(1), guides.sketchGuide(2), guides.profileGuide("assure"), guides.whyGuide(), guides.propGuide("assure"), guides.triggerGuide("kam"), guides.postponedGuide(), guides.challengeGuide()];
+  for (const g of exs) ok(`[${l}] example differs from the model answer (${g.title})`, !!g.example && g.example !== g.answer && g.example.length > 80);
+}
+lang.setCurrentLang("en");
+
 console.log(failed ? `\n${failed} check(s) FAILED` : "\nAll checks passed.");
 process.exit(failed ? 1 : 0);

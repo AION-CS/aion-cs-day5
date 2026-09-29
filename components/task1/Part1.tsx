@@ -2,6 +2,8 @@
 
 import clsx from "clsx";
 import { AnswerBlock } from "@/components/ui/AnswerBlock";
+import { BlockMissing } from "@/components/ui/BlockMissing";
+import { ExampleAnswer } from "@/components/ui/ExampleAnswer";
 import { AnswerKey } from "@/components/ui/AnswerKey";
 import { CalcDiagnosis } from "@/components/ui/CalcDiagnosis";
 import { Field } from "@/components/ui/Field";
@@ -45,6 +47,7 @@ export function Block11() {
       title={tt("Block 1.1 · Sort the CRM fields by kind of criterion", "Block 1.1 · Die CRM-Felder nach Art des Kriteriums sortieren")}
       kind="OBJECTIVE"
       minutes={BLOCK_MINUTES["1.1"]}
+      core={true}
       findIt={tt(
         "Route 1 → Task 1 → the nine fields on the sort board below, copied from DataCloud's CRM export. Answer on the sort board.",
         "Route 1 → Task 1 → die neun Felder auf der Sortiertafel unten, kopiert aus dem CRM-Export von DataCloud. Antworten Sie auf der Sortiertafel.",
@@ -61,6 +64,7 @@ export function Block11() {
         undoCount={l1.sortHistory.length}
         redoCount={l1.sortFuture.length}
         domId={IDS.field}
+        keyPhrases={Object.fromEntries(FIELDS.map((f) => [f.id, f.key]))}
         clues={Object.fromEntries(FIELDS.map((f) => [f.id, f.clue]))}
         reasons={Object.fromEntries(FIELDS.map((f) => [f.id, f.why]))}
         result={l1.sortResult}
@@ -101,12 +105,14 @@ export function Block11() {
         min={MIN_LINE}
         rows={2}
       />
+      <ExampleAnswer id="extra-crit-example" guide={extraCritGuide()} />
       {mentor && <MentorGuide guide={extraCritGuide()} />}
       <p className="text-caption text-ash">
         {tt("Words in the fields, explained in plain language: ", "Begriffe in den Feldern, einfach erklärt: ")}
         <Gloss>{tt("NACE, CRM.", "NACE, CRM.")}</Gloss>
       </p>
       <AnswerKey block={sortKey()} />
+      <BlockMissing block="1.1" route={1} />
     </AnswerBlock>
   );
 }
@@ -157,6 +163,7 @@ export function Block12() {
       title={tt("Block 1.2 · Is tailoring worth it? Effort against benefit", "Block 1.2 · Lohnt sich der Zuschnitt? Aufwand gegen Nutzen")}
       kind="OBJECTIVE + JUDGED"
       minutes={BLOCK_MINUTES["1.2"]}
+      core={true}
       findIt={tt(
         "Route 1 → Task 1 → the three tables “DataCloud's pilot” directly below. The numbers are printed there. Answer in the fields under the tables.",
         "Route 1 → Task 1 → die drei Tabellen „Pilot von DataCloud“ direkt darunter. Die Zahlen stehen dort. Antworten Sie in den Feldern unter den Tabellen.",
@@ -287,6 +294,7 @@ export function Block12() {
           ]}
         />
       </TextBox>
+      <ExampleAnswer id="worth-example" guide={worthGuide()} />
       {mentor && <MentorGuide guide={worthGuide()} />}
 
       <CheckBar onCheck={check} checkLabel={tt("Check my figures and sentence", "Meine Werte und meinen Satz prüfen")} checks={l1.checks} />
@@ -300,6 +308,7 @@ export function Block12() {
               )}
         </Reading>
       )}
+      <BlockMissing block="1.2" route={1} />
     </AnswerBlock>
   );
 }
@@ -320,6 +329,7 @@ export function Block13() {
       title={tt("Block 1.3 · Target group, where accounts differ, three segment sketches", "Block 1.3 · Zielgruppe, wo Accounts sich unterscheiden, drei Segmentskizzen")}
       kind="OBJECTIVE + JUDGED"
       minutes={BLOCK_MINUTES["1.3"]}
+      core={false}
       findIt={tt(
         "Route 1 → Task 1 → the sentence from DataCloud's strategy paper below, the twelve accounts in Block 2.1 and the kinds of criteria in Materi A2 and A3. Answer in the fields below.",
         "Route 1 → Task 1 → der Satz aus dem Strategiepapier von DataCloud unten, die zwölf Accounts in Block 2.1 und die Arten von Kriterien in Materi A2 und A3. Antworten Sie in den Feldern unten.",
@@ -406,6 +416,7 @@ export function Block13() {
                   {h.basis && <p className="mt-1 text-micro normal-case tracking-normal text-ash">{tt("Chosen: ", "Gewählt: ")}{BASIS_LABEL[h.basis]}</p>}
                 </div>
               </TextBox>
+              <ExampleAnswer id={`sketch-${i}-example`} guide={sketchGuide(i)} />
               {mentor && <MentorGuide guide={sketchGuide(i)} />}
             </div>
           );
@@ -419,6 +430,7 @@ export function Block13() {
           </Reading>
         )}
       </div>
+      <BlockMissing block="1.3" route={1} />
     </AnswerBlock>
   );
 }
@@ -452,6 +464,7 @@ export function Block14() {
       title={tt("Block 1.4 · Coaching reflection: from Level 1 to Level 2", "Block 1.4 · Coaching-Reflexion: von Level 1 zu Level 2")}
       kind="JUDGED"
       minutes={BLOCK_MINUTES["1.4"]}
+      core={false}
       findIt={tt(
         "Route 1 → Task 1 → your own answers in Blocks 1.1 to 1.3 above, and the three ways segmentation fails in Materi A6. Answer in the three fields below.",
         "Route 1 → Task 1 → Ihre eigenen Antworten in den Blöcken 1.1 bis 1.3 oben und die drei Arten, wie Segmentierung scheitert, in Materi A6. Antworten Sie in den drei Feldern unten.",
@@ -469,9 +482,11 @@ export function Block14() {
       {fields.map((f) => (
         <div key={f.k} className="space-y-1.5">
           <TextBox id={IDS.reflect(f.k)} label={f.label} help={f.help} value={l1.reflect[f.k]} onChange={(v) => patch((s) => ({ reflect: { ...s.reflect, [f.k]: v } }))} min={MIN_LINE} rows={3} />
+          <ExampleAnswer id={`reflect-${f.k}-example`} guide={reflectGuide(f.k)} />
           {mentor && <MentorGuide guide={reflectGuide(f.k)} />}
         </div>
       ))}
+      <BlockMissing block="1.4" route={1} />
     </AnswerBlock>
   );
 }

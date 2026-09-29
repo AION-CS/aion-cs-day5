@@ -2,12 +2,16 @@
 
 import { CARDS_A } from "@/components/materi/CardsA";
 import { CARDS_B } from "@/components/materi/CardsB";
+import { OptionalSection } from "@/components/ui/OptionalSection";
 import { ReferencesAccordion } from "@/components/ui/ReferencesAccordion";
-import { SECTIONS } from "@/data/materialIndex";
+import { MATERIALS, SECTIONS, materialAnchorId } from "@/data/materialIndex";
 import type { RefKey } from "@/data/references";
 import { tt } from "@/lib/lang";
 
 /** The material block of a route: one continuous run of study cards, then the block's own reference list. */
+
+const CARDS_A_META = MATERIALS.filter((m) => m.block === "A");
+const CARDS_B_META = MATERIALS.filter((m) => m.block === "B");
 
 const REFS_A: RefKey[] = ["smith1956", "wind1978", "dickson1987", "kotler2022", "shapiro1984", "christensen2016", "mckinsey2021", "gartner2019", "gilmore1997", "burgess2021", "kaplan2004", "gdpr", "uwg7", "tdddg25", "bsic5", "nis2"];
 const REFS_B: RefKey[] = ["coyne2008", "porter1980", "zoltners2004", "kaplan2004", "pine1993", "gilmore1997", "courtney1997", "hubbard2014", "klein2007", "doran1981", "deming1986"];
@@ -40,9 +44,22 @@ export function MateriA() {
           "Sieben Karten, Level 1 und Level 2 in einem Durchgang: zuerst Wissen (warum segmentieren, Zielgruppe und Segment, die Kriterien, Personalisierung und ihre Wirtschaftlichkeit), dann Anwendung (drei bedarfsbasierte Segmente, was ein Segment wert ist, Maßnahmen wählen). Jedes Diagramm nutzt Weserdata, einen anderen Anbieter, damit die Aufgabe nie für Sie gelöst wird.",
         )}
       </p>
-      {CARDS_A.map((C, i) => (
-        <C key={i} />
-      ))}
+      {CARDS_A.map((C, i) => {
+        const m = CARDS_A_META[i];
+        return m.optional ? (
+          <OptionalSection
+            key={i}
+            id={materialAnchorId(m.id)}
+            title={`${m.id} · ${m.title}`}
+            minutes={m.minutes}
+            reason={tt("Deepens a card a Core task block already covers. Not needed to complete the Segment Analysis File.", "Vertieft eine Karte, die ein Kern-Block schon abdeckt. Für die Segment Analysis File nicht nötig.")}
+          >
+            <C />
+          </OptionalSection>
+        ) : (
+          <C key={i} />
+        );
+      })}
       <ReferencesAccordion block="A" keys={REFS_A} note={NOTE()} />
     </Block>
   );
@@ -62,9 +79,22 @@ export function MateriB() {
           "Fünf Karten für Level 3. Sie sortieren keine Accounts mehr, sondern entscheiden, wohin eine ganze Vertriebsorganisation ihr Geld steckt. Jede Karte endet mit Regeln, die die Aufgabe nutzt; jedes Diagramm nutzt Nordhafen IT, einen anderen Anbieter.",
         )}
       </p>
-      {CARDS_B.map((C, i) => (
-        <C key={i} />
-      ))}
+      {CARDS_B.map((C, i) => {
+        const m = CARDS_B_META[i];
+        return m.optional ? (
+          <OptionalSection
+            key={i}
+            id={materialAnchorId(m.id)}
+            title={`${m.id} · ${m.title}`}
+            minutes={m.minutes}
+            reason={tt("Deepens a card a Core task block already covers. Not needed to complete the Segment Strategy Memo.", "Vertieft eine Karte, die ein Kern-Block schon abdeckt. Für das Segment Strategy Memo nicht nötig.")}
+          >
+            <C />
+          </OptionalSection>
+        ) : (
+          <C key={i} />
+        );
+      })}
       <ReferencesAccordion block="B" keys={REFS_B} note={NOTE()} />
     </Block>
   );

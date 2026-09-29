@@ -2,6 +2,8 @@
 
 import clsx from "clsx";
 import { AnswerBlock } from "@/components/ui/AnswerBlock";
+import { BlockMissing } from "@/components/ui/BlockMissing";
+import { ExampleAnswer } from "@/components/ui/ExampleAnswer";
 import { AnswerKey } from "@/components/ui/AnswerKey";
 import { BudgetBar } from "@/components/ui/BudgetBar";
 import { CheckBar, OptionList, Reading, ScorePick, TextBox } from "@/components/ui/Inputs";
@@ -77,6 +79,7 @@ export function Block31() {
       title={tt("Block 3.1 · Criteria for segment prioritisation", "Block 3.1 · Kriterien für die Segmentpriorisierung")}
       kind="OBJECTIVE + JUDGED"
       minutes={BLOCK_MINUTES["3.1"]}
+      core={false}
       findIt={tt("Route 2 → Task 2 → the six criteria below. Answer by choosing three and saying what each measures.", "Route 2 → Task 2 → die sechs Kriterien unten. Antworten Sie, indem Sie drei wählen und sagen, was jedes misst.")}
     >
       <MaterialRefs refs={["B1"]} />
@@ -123,11 +126,13 @@ export function Block31() {
             min={MIN_LINE}
             rows={2}
           />
+          <ExampleAnswer id={`crit-${c}-example`} guide={critTextGuide(c)} />
           {mentor && <MentorGuide guide={critTextGuide(c)} />}
         </div>
       ))}
       <CheckBar onCheck={check} checkLabel={tt("Check my criteria", "Meine Kriterien prüfen")} checks={r2.checks} />
       <AnswerKey block={critKey()} />
+      <BlockMissing block="3.1" route={2} />
     </AnswerBlock>
   );
 }
@@ -179,6 +184,7 @@ export function Block32() {
       title={tt("Block 3.2 · Rate five candidate segments and name your core segments", "Block 3.2 · Fünf Kandidatensegmente bewerten und Ihre Kernsegmente benennen")}
       kind="OBJECTIVE + JUDGED"
       minutes={BLOCK_MINUTES["3.2"]}
+      core={true}
       findIt={tt("Route 2 → Task 2 → the table “Five candidate segments” below. Answer in the five rating rows under it.", "Route 2 → Task 2 → die Tabelle „Fünf Kandidatensegmente“ unten. Antworten Sie in den fünf Bewertungszeilen darunter.")}
     >
       <MaterialRefs refs={["B1"]} />
@@ -284,6 +290,7 @@ export function Block32() {
         </Reading>
       )}
       <AnswerKey block={rateKey()} />
+      <BlockMissing block="3.2" route={2} />
     </AnswerBlock>
   );
 }
@@ -302,6 +309,7 @@ export function Block33() {
       title={tt("Block 3.3 · A sales strategy for each segment you serve", "Block 3.3 · Eine Vertriebsstrategie für jedes Segment, das Sie bedienen")}
       kind="OBJECTIVE + JUDGED"
       minutes={BLOCK_MINUTES["3.3"]}
+      core={false}
       findIt={tt("Route 2 → Task 2 → the segments you marked core or serve standard in Block 3.2, and the five sales models in Materi B2. Answer in one card per segment.", "Route 2 → Task 2 → die Segmente, die Sie in Block 3.2 als Kern oder standardisiert markiert haben, und die fünf Vertriebsmodelle in Materi B2. Antworten Sie in einer Karte pro Segment.")}
     >
       <MaterialRefs refs={["B2"]} />
@@ -353,6 +361,7 @@ export function Block33() {
               min={MIN_SENTENCE}
               rows={2}
             />
+            <ExampleAnswer id={`prop-${id}-example`} guide={propGuide(id)} />
             {mentor && <MentorGuide guide={propGuide(id)} />}
           </div>
         );
@@ -366,6 +375,7 @@ export function Block33() {
         </Reading>
       )}
       <AnswerKey block={salesKey()} />
+      <BlockMissing block="3.3" route={2} />
     </AnswerBlock>
   );
 }
@@ -392,6 +402,7 @@ export function Block34() {
       title={tt("Block 3.4 · Standardise or individualise, element by element", "Block 3.4 · Standardisieren oder individualisieren, Element für Element")}
       kind="OBJECTIVE + JUDGED"
       minutes={BLOCK_MINUTES["3.4"]}
+      core={false}
       findIt={tt("Route 2 → Task 2 → the grid below: one column per segment you serve, one row per offer element. Answer by setting every cell.", "Route 2 → Task 2 → das Raster unten: eine Spalte pro bedientem Segment, eine Zeile pro Angebotselement. Antworten Sie, indem Sie jede Zelle setzen.")}
     >
       <MaterialRefs refs={["B3"]} />
@@ -489,6 +500,7 @@ export function Block34() {
         </Reading>
       )}
       <AnswerKey block={gridKey()} />
+      <BlockMissing block="3.4" route={2} />
     </AnswerBlock>
   );
 }
@@ -530,6 +542,7 @@ export function Block35() {
       title={tt("Block 3.5 · The measures architecture: fund, sequence, own", "Block 3.5 · Die Maßnahmenarchitektur: finanzieren, ordnen, verantworten")}
       kind="OBJECTIVE + JUDGED"
       minutes={BLOCK_MINUTES["3.5"]}
+      core={true}
       findIt={tt(`Route 2 → Task 2 → the eight items below. The budget is ${euro(R2_BUDGET)} over ${R2_MONTHS} months. Answer in the item cards.`, `Route 2 → Task 2 → die acht Punkte unten. Das Budget beträgt ${euro(R2_BUDGET)} über ${R2_MONTHS} Monate. Antworten Sie in den Karten der Punkte.`)}
     >
       <MaterialRefs refs={["B5"]} />
@@ -622,6 +635,7 @@ export function Block35() {
                   min={20}
                   rows={2}
                 />
+                <ExampleAnswer id={`arch-${a.id}-trigger-example`} guide={triggerGuide(a.id)} />
                 {mentor && <MentorGuide guide={triggerGuide(a.id)} />}
               </>
             )}
@@ -669,6 +683,7 @@ export function Block35() {
             min={15}
             rows={2}
           />
+          <ExampleAnswer id="postponed-example" guide={postponedGuide()} />
           {mentor && <MentorGuide guide={postponedGuide()} />}
         </div>
       )}
@@ -681,6 +696,7 @@ export function Block35() {
         </Reading>
       )}
       <AnswerKey block={ownerKey(f)} />
+      <BlockMissing block="3.5" route={2} />
     </AnswerBlock>
   );
 }
@@ -701,6 +717,7 @@ export function Block36() {
       title={tt("Block 3.6 · Make the segment decision despite incomplete data", "Block 3.6 · Die Segmententscheidung trotz unvollständiger Daten treffen")}
       kind="OBJECTIVE + JUDGED"
       minutes={BLOCK_MINUTES["3.6"]}
+      core={true}
       findIt={tt("Route 2 → Task 2 → your own answers in Blocks 3.1 to 3.5, the baselines below, and the regret table in Materi B4. Answer in the fields below.", "Route 2 → Task 2 → Ihre eigenen Antworten in den Blöcken 3.1 bis 3.5, die Ausgangswerte unten und die Regret-Tabelle in Materi B4. Antworten Sie in den Feldern unten.")}
     >
       <MaterialRefs refs={["B4"]} />
@@ -729,6 +746,7 @@ export function Block36() {
               min={MIN_LINE}
               rows={2}
             />
+            <ExampleAnswer id={`assumption-${i}-example`} guide={assumptionGuide(i)} />
             {mentor && <MentorGuide guide={assumptionGuide(i)} />}
           </div>
         ))}
@@ -826,6 +844,7 @@ export function Block36() {
             ]}
           />
         </TextBox>
+        <ExampleAnswer id="challenge-example" guide={challengeGuide()} />
         {mentor && <MentorGuide guide={challengeGuide()} />}
       </div>
 
@@ -838,6 +857,7 @@ export function Block36() {
       )}
       <AnswerKey block={decisionKey()} />
       <AnswerKey block={tripKey()} />
+      <BlockMissing block="3.6" route={2} />
     </AnswerBlock>
   );
 }

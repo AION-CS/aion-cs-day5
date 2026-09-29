@@ -1,6 +1,7 @@
 "use client";
 
 import { ExportBar } from "@/components/ui/ExportBar";
+import { OptionalSection } from "@/components/ui/OptionalSection";
 import { Block11, Block12, Block13, Block14 } from "@/components/task1/Part1";
 import { Block21, Block22, Block23 } from "@/components/task1/Part2";
 import { Callout } from "@/components/ui/MaterialCard";
@@ -11,7 +12,7 @@ import { euro, tt } from "@/lib/lang";
 import { exportName } from "@/lib/slug";
 import { usePersisted } from "@/store/usePersisted";
 import { Gloss } from "@/lib/glossify";
-import { TASK1_MINUTES } from "@/lib/routes";
+import { BLOCK_MINUTES, TASK1_MINUTES } from "@/lib/routes";
 
 /** The case, stated once, directly above the task. */
 function CaseBrief() {
@@ -98,12 +99,33 @@ export function Task1() {
       <PartHeading id="part-1" n={1} title={tt("Understand the landscape", "Die Landschaft verstehen")} level={tt("Level 1 · Knowledge", "Level 1 · Wissen")} />
       <Block11 />
       <Block12 />
-      <Block13 />
-      <Block14 />
+      <OptionalSection
+        id="block-1-3"
+        title={tt("Block 1.3 · Target group, differences, three sketches", "Block 1.3 · Zielgruppe, Unterschiede, drei Skizzen")}
+        minutes={BLOCK_MINUTES["1.3"]}
+        reason={tt("Practises the need-first reading of Block 1.1 in your own words; the Core blocks already teach the skill.", "Übt das bedarfsorientierte Lesen aus Block 1.1 in eigenen Worten; die Kern-Blöcke vermitteln die Fertigkeit bereits.")}
+      >
+        <Block13 />
+      </OptionalSection>
+      <OptionalSection
+        id="block-1-4"
+        title={tt("Block 1.4 · Coaching reflection", "Block 1.4 · Coaching-Reflexion")}
+        minutes={BLOCK_MINUTES["1.4"]}
+        reason={tt("A reflective bridge between Level 1 and Level 2, not content the Segment Analysis File itself needs.", "Eine reflektierende Brücke zwischen Level 1 und Level 2, kein Inhalt, den die Segment Analysis File selbst braucht.")}
+      >
+        <Block14 />
+      </OptionalSection>
 
       <PartHeading id="part-2" n={2} title={tt("Analyse and act", "Analysieren und handeln")} level={tt("Level 2 · Application", "Level 2 · Anwendung")} />
       <Block21 />
-      <Block22 />
+      <OptionalSection
+        id="block-2-2"
+        title={tt("Block 2.2 · Segment profiles, value, gaps", "Block 2.2 · Segmentprofile, Wert, Lücken")}
+        minutes={BLOCK_MINUTES["2.2"]}
+        reason={tt("Elaborates the placement in Block 2.1 into rated profiles; Block 2.3 can be answered without it.", "Vertieft die Zuordnung aus Block 2.1 zu bewerteten Profilen; Block 2.3 lässt sich auch ohne sie beantworten.")}
+      >
+        <Block22 />
+      </OptionalSection>
       <Block23 />
 
       <ExportBar

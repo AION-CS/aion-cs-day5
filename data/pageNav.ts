@@ -1,5 +1,6 @@
 import { MATERIALS, materialAnchorId } from "@/data/materialIndex";
 import type { RouteNo } from "@/lib/routes";
+import { isOptionalBlock } from "@/lib/progress";
 import type { TaskBlockId } from "@/lib/progress";
 import { tt } from "@/lib/lang";
 
@@ -17,13 +18,15 @@ export type NavItem = {
   title: string;
   /** Completion source: a card marked read, or a task block filled in. Absent = no done state. */
   done?: { card: string } | { block: TaskBlockId };
+  /** Collapsed by default (OptionalSection), and outside the dossier ring's count and total. */
+  optional?: boolean;
 };
 export type NavGroup = { label: string; items: NavItem[] };
 
 const cards = (block: "A" | "B"): NavItem[] =>
-  MATERIALS.filter((m) => m.block === block).map((m) => ({ id: materialAnchorId(m.id), short: m.id, title: m.title, done: { card: m.id } }));
+  MATERIALS.filter((m) => m.block === block).map((m) => ({ id: materialAnchorId(m.id), short: m.id, title: m.title, done: { card: m.id }, optional: m.optional }));
 
-const blk = (n: string, title: string, block: TaskBlockId): NavItem => ({ id: `block-${n.replace(".", "-")}`, short: n, title, done: { block } });
+const blk = (n: string, title: string, block: TaskBlockId): NavItem => ({ id: `block-${n.replace(".", "-")}`, short: n, title, done: { block }, optional: isOptionalBlock(block) });
 
 export function pageNav(route: RouteNo): NavGroup[] {
   if (route === 1)

@@ -6,6 +6,7 @@ import { MATERIAL_BY_ID, materialAnchorId } from "@/data/materialIndex";
 import type { MaterialId } from "@/data/materialIndex";
 import { plainOf } from "@/data/materialPlain";
 
+import { CorePill } from "@/components/ui/AnswerBlock";
 import { REFERENCES, refFull } from "@/data/references";
 import type { RefKey } from "@/data/references";
 import { scrollToAndFlash } from "@/lib/flash";
@@ -73,6 +74,7 @@ export function MaterialCard({
       <header className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
         <span className="rounded bg-ink px-2 py-0.5 text-micro font-bold text-paper">{id}</span>
         <h3 className="min-w-0 flex-1">{meta.title}</h3>
+        <CorePill core={!meta.optional} />
         <span className="smallcaps whitespace-nowrap">
           {meta.minutes} {tt("min", "Min.")}
         </span>

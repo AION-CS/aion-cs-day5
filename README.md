@@ -3,7 +3,7 @@
 **Customer Retention & Buying Behaviour in B2B IT Sales · Module 3, Day 1 of 2.**
 *Understanding customer segmentation and strategically developing personalisation.*
 A self-study companion: study material with twelve live instruments, two tasks and two working documents, in **English and German**
-(EN | DE in the top bar, `../CLAUDE.md` #32). It carries the shared standards `../CLAUDE.md` #1 to #28, the two-route form of #30
+(EN | DE in the top bar, `../CLAUDE.md` #32). It carries the shared standards `../CLAUDE.md` #1 to #28 and #34 to #35, the two-route form of #30
 and the German version of #32.
 
 The case company is **DataCloud Services GmbH**, a German cloud provider for the Mittelstand: *offers appear generic, the conversion
@@ -95,21 +95,46 @@ a worked answer (with arithmetic) under every other question, in rust, never exp
 6. **Day 7 note (for the course):** #29 says Friday days are named in each prompt; this request did not name one, so Days 5–7 follow #30.
 7. **Sources to re-check before teaching:** citations are given by their usual details; the Gartner (2019) 17% figure, the Zoltners et al.
    (2004) title and the current wording of § 25 TDDDG and § 7 UWG should be verified; BSI C5 has a 2026 revision (C5:2026).
+8. **Core / Optional on both routes (CLAUDE.md #35, added 2026-09-29 to match Day 4).** No question, card or figure was changed or removed;
+   the shortest thread to each route's own objective stays open and the rest is folded to one line ("Show this", "Hide" to fold it
+   again). Route 1 objective: *understand the segments and decide where personalising pays*. **Core 1.1** (read the criteria),
+   **1.2** (does tailoring pay: F1 to F3), **2.1** (place twelve accounts in segments), **2.3** (choose, score and order three
+   measures). **Optional 1.3, 1.4, 2.2** (sketches, coaching reflection, profiles), each deepening what a Core block already teaches.
+   Materi **A3, A4, A5, A7** stay Core (cited by a Core block); **A1, A2, A6** are collapsed. Route 2 objective: *choose the
+   segments to serve and decide although the data is incomplete*. **Core 3.2** (rate the five segments, name the core), **3.5** (fund,
+   sequence and own the measures), **3.6** (the decision). **Optional 3.1, 3.3, 3.4**. Materi **B1, B4, B5** stay Core; **B2, B3** are
+   collapsed. The ring, the page map's done/total and both missing lists count Core only (`lib/progress.ts` `OPTIONAL_BLOCKS`,
+   `materialIndex.ts` `optional`). The tag shows on the page map (always visible, beside the pill on wide screens) and on every card and
+   block (`CorePill`). A jump to a collapsed item (page map, a material chip, a missing-list entry, Route 2's pointer to Block 2.2 in
+   Route 1) opens it first (`lib/flash.ts`, `store/useOptionalOpen.ts`). "Fill all model answers" still fills Core and Optional alike;
+   `npm run verify:calc` also proves a Core-only fill empties both missing lists in EN and DE.
+9. **Two always-live rust "still missing" notices (CLAUDE.md #34).** Under every answer block (`components/ui/BlockMissing.tsx`) and above
+   the Export button, with no Check and no click first; each disappears when its gap closes. They report completeness only, never
+   correctness, so #4 is untouched.
+10. **"Show clue and example answer" on every free-text field (CLAUDE.md #23 update).** `components/ui/ExampleAnswer.tsx`, open to every
+    learner. For open fields it shows the mentor's model text; where the model text is the case's own calculated result or a pick the
+    block also grades (1.2 sentence, 1.3 sketches, 2.2 profile need, 2.3 first priority, 3.3 value proposition, 3.5 trigger and
+    pickup, 3.6 board's challenge) it shows a separately written `example` in `lib/mentorGuide.ts`: the same method, another company,
+    other numbers, ending by sending the learner back to their own figures. The mentor's own panel still shows the real answer.
+11. **"Highlight the key words" on both sort boards (1.1 and 2.1)** underlines the decisive phrase of every item at once, never which bin
+    it belongs in (`keyPhrases`; a script check proves every phrase is an exact substring of its text in both languages).
+12. **Calculation help.** Block 1.2 already had "Show where the numbers are", "Show the formula" and the calculator with per-part clues;
+    Block 2.3 gained a hidden "Show the formula" per measure for economic viability (cost per account, from Materi A7).
 
 ## Coverage: where each task block is taught
 
 | Block | Taught in | Help while answering |
 |---|---|---|
-| 1.1 CRM fields | A3 (three tests, nested approach, worked sort) | Test questions · check (count) + clue per item · reasoning after two checks · undo/redo |
-| 1.2 F1–F3, sentence | A4 (formula, five-step worked example on Weserdata) | Where the numbers are · formula + calculator with per-part clues · What to check |
-| 1.3 target group, differ most, sketches | A2, A3, A5 | Clues on a/b · sketch frame · check (basis, need, ≤ 1 firmographic) |
-| 1.4 reflection | A4, A6 | Worked answers for the mentor |
-| 2.1 accounts | A5 (profiles, pair tests, worked example) | Test questions · check (count) + clue · reasoning · undo/redo |
-| 2.2 profiles, gaps, risk | A5, A6 (value rule, content per segment, four kinds of gap) | Own tally · check against own tally · gap check |
-| 2.3 measures | A7 (matching table, three score rules, budget, legal tests) | Test questions · budget bar · coverage · check (segments, viability) · order check |
-| 3.1 criteria | B1 | Check (both axes) + clue |
-| 3.2 ratings, roles | B1 (bands, role rule) | Printed pools · matrix of own ratings · check (count; roles vs own ratings) |
-| 3.3 sales models | B2 (30% rule, behaviour rule) | Live cost share · check + clue |
-| 3.4 grid | B3 (three rules, costs) | Cost vs limit per column · check (three rules per segment) |
-| 3.5 architecture | B5 (owner, start, trigger tests) | Owner test · budget bar · plan reading · check (three rules) |
-| 3.6 decision | B4 (value of information, regret, tripwire) | Baselines · check (wait, metric, threshold) |
+| 1.1 CRM fields · **Core** | A3 (three tests, nested approach, worked sort) | Test questions · check (count) + clue per item · reasoning after two checks · undo/redo |
+| 1.2 F1–F3, sentence · **Core** | A4 (formula, five-step worked example on Weserdata) | Where the numbers are · formula + calculator with per-part clues · What to check |
+| 1.3 target group, differ most, sketches · Optional | A2, A3, A5 | Clues on a/b · sketch frame · check (basis, need, ≤ 1 firmographic) |
+| 1.4 reflection · Optional | A4, A6 | Worked answers for the mentor |
+| 2.1 accounts · **Core** | A5 (profiles, pair tests, worked example) | Test questions · check (count) + clue · reasoning · undo/redo |
+| 2.2 profiles, gaps, risk · Optional | A5, A6 (value rule, content per segment, four kinds of gap) | Own tally · check against own tally · gap check |
+| 2.3 measures · **Core** | A7 (matching table, three score rules, budget, legal tests) | Test questions · budget bar · coverage · check (segments, viability) · order check |
+| 3.1 criteria · Optional | B1 | Check (both axes) + clue |
+| 3.2 ratings, roles · **Core** | B1 (bands, role rule) | Printed pools · matrix of own ratings · check (count; roles vs own ratings) |
+| 3.3 sales models · Optional | B2 (30% rule, behaviour rule) | Live cost share · check + clue |
+| 3.4 grid · Optional | B3 (three rules, costs) | Cost vs limit per column · check (three rules per segment) |
+| 3.5 architecture · **Core** | B5 (owner, start, trigger tests) | Owner test · budget bar · plan reading · check (three rules) |
+| 3.6 decision · **Core** | B4 (value of information, regret, tripwire) | Baselines · check (wait, metric, threshold) |

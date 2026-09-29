@@ -5,7 +5,7 @@ import { SEGMENTS, SEGMENT_IDS } from "@/data/segments";
 import { SKETCH_MIN, mentionsNeed } from "@/data/sketches";
 import { ARCH_BY_ID, ARCH_IDS, CAND_BY_ID, CAND_IDS, CRITERIA, ELEMENTS, ELEMENT_IDS, R2_BUDGET } from "@/data/route2";
 import { archOver, citesTailorFigure, funded, hasNumber, servedIds } from "@/lib/checks";
-import { MIN_LINE, MIN_SENTENCE } from "@/lib/progress";
+import { MIN_LINE, MIN_SENTENCE, isOptionalBlock } from "@/lib/progress";
 import { parseAmount } from "@/lib/parseAmount";
 import { euro, tt } from "@/lib/lang";
 import type { Persisted } from "@/store/useStore";
@@ -71,6 +71,7 @@ export function l1Missing(p: Persisted): MissingEntry[] {
   if (!w) e(IDS.worth, tt(`${B("1.2")}: the sentence on where tailoring is worth it is empty.`, `${B("1.2")}: Der Satz dazu, wo sich der Zuschnitt lohnt, ist leer.`));
   else if (w.length < MIN_SENTENCE) e(IDS.worth, tt(`${B("1.2")}: the sentence needs at least ${MIN_SENTENCE} characters.`, `${B("1.2")}: Der Satz braucht mindestens ${MIN_SENTENCE} Zeichen.`));
   else if (!citesTailorFigure(w)) e(IDS.worth, tt(`${B("1.2")}: the sentence states no figure from your calculation.`, `${B("1.2")}: Der Satz nennt keine Zahl aus Ihrer Rechnung.`));
+  if (!isOptionalBlock("b13")) {
   if (!l1.tg) e(IDS.tg, tt(`${B("1.3")}: say whether the strategy paper names a target group or a segment.`, `${B("1.3")}: Sagen Sie, ob das Strategiepapier eine Zielgruppe oder ein Segment nennt.`));
   if (!l1.diff) e(IDS.diff, tt(`${B("1.3")}: choose where the accounts differ the most.`, `${B("1.3")}: Wählen Sie, wo sich die Accounts am stärksten unterscheiden.`));
   let firmo = 0;
@@ -83,14 +84,17 @@ export function l1Missing(p: Persisted): MissingEntry[] {
     else if (t.length < SKETCH_MIN) e(IDS.sketch(i), tt(`${B("1.3")}: sketch ${n} needs at least ${SKETCH_MIN} characters.`, `${B("1.3")}: Skizze ${n} braucht mindestens ${SKETCH_MIN} Zeichen.`));
     else if (!mentionsNeed(t)) e(IDS.sketch(i), tt(`${B("1.3")}: sketch ${n} names no need. Say what these accounts need.`, `${B("1.3")}: Skizze ${n} nennt keinen Bedarf. Sagen Sie, was diese Accounts brauchen.`));
   });
+  }
   const rf: [keyof typeof l1.reflect, string, string][] = [
     ["simplify", "where you oversimplified", "wo Sie vereinfacht haben"],
     ["worth", "where personalising is worth it and where not", "wo sich Personalisierung lohnt und wo nicht"],
     ["prioritise", "how a strategic decision-maker would prioritise", "wie eine strategische Entscheiderin priorisieren würde"],
   ];
+  if (!isOptionalBlock("b14"))
   for (const [k, en, de] of rf)
     if (l1.reflect[k].trim().length < MIN_LINE) e(IDS.reflect(k), tt(`${B("1.4")}: say ${en} (at least ${MIN_LINE} characters).`, `${B("1.4")}: Sagen Sie, ${de} (mindestens ${MIN_LINE} Zeichen).`));
   for (const a of ACCOUNTS) if (l1.assign[a.id] === null) e(IDS.account(a.id), tt(`${B("2.1")}: ${a.name} has no segment.`, `${B("2.1")}: ${a.name} hat kein Segment.`));
+  if (!isOptionalBlock("b22")) {
   for (const s of SEGMENT_IDS) {
     const pr = l1.profiles[s];
     const name = SEGMENTS[s].label;
@@ -100,6 +104,7 @@ export function l1Missing(p: Persisted): MissingEntry[] {
   }
   if (l1.gaps.length < 2) e(IDS.gaps, tt(`${B("2.2")}: choose at least two things the file does not tell you.`, `${B("2.2")}: Wählen Sie mindestens zwei Dinge, die die Datei nicht verrät.`));
   if (l1.riskText.trim().length < 20) e(IDS.riskText, tt(`${B("2.2")}: name one risk of a wrong segmentation and its sign (at least 20 characters).`, `${B("2.2")}: Nennen Sie ein Risiko einer falschen Segmentierung und sein Anzeichen (mindestens 20 Zeichen).`));
+  }
   if (l1.chosen.length !== CHOOSE) e(IDS.measurePick, tt(`${B("2.3")}: choose exactly ${CHOOSE} measures (you have ${l1.chosen.length}).`, `${B("2.3")}: Wählen Sie genau ${CHOOSE} Maßnahmen (Sie haben ${l1.chosen.length}).`));
   for (const id of l1.chosen) {
     const name = MEASURE_BY_ID[id].name;
@@ -118,22 +123,24 @@ export function r2Missing(p: Persisted): MissingEntry[] {
   const out = participantMissing(p);
   const { r2 } = p;
   const e = (id: string, label: string) => out.push({ id, label });
+  if (!isOptionalBlock("b31")) {
   if (r2.crits.length !== 3) e(IDS.critPick, tt(`${B("3.1")}: choose exactly 3 prioritisation criteria (you have ${r2.crits.length}).`, `${B("3.1")}: Wählen Sie genau 3 Priorisierungskriterien (Sie haben ${r2.crits.length}).`));
   for (const c of r2.crits)
     if ((r2.critText[c] ?? "").trim().length < MIN_LINE) e(IDS.crit(c), tt(`${B("3.1")}: say what “${CRITERIA[c].name}” measures and why it matters (at least ${MIN_LINE} characters).`, `${B("3.1")}: Sagen Sie, was „${CRITERIA[c].name}“ misst und warum es zählt (mindestens ${MIN_LINE} Zeichen).`));
+  }
   for (const id of CAND_IDS) {
     const n = CAND_BY_ID[id].name;
     if (!r2.attract[id] || !r2.ability[id]) e(IDS.rate(id), tt(`${B("3.2")}: rate ${n} on attractiveness and ability to win.`, `${B("3.2")}: Bewerten Sie ${n} nach Attraktivität und Gewinnfähigkeit.`));
     if (!r2.roles[id]) e(IDS.rate(id), tt(`${B("3.2")}: give ${n} a role (core, serve standard or deprioritise).`, `${B("3.2")}: Geben Sie ${n} eine Rolle (Kernsegment, standardisiert bedienen oder zurückstellen).`));
   }
   const served = servedIds(r2);
-  if (served.length === 0) e(IDS.rate("assure"), tt(`${B("3.3")}: mark at least one segment as core or serve standard in Block 3.2 first.`, `${B("3.3")}: Markieren Sie zuerst in Block 3.2 mindestens ein Segment als Kern oder standardisiert.`));
+  if (!isOptionalBlock("b33") && served.length === 0) e(IDS.rate("assure"), tt(`${B("3.3")}: mark at least one segment as core or serve standard in Block 3.2 first.`, `${B("3.3")}: Markieren Sie zuerst in Block 3.2 mindestens ein Segment als Kern oder standardisiert.`));
   for (const id of served) {
     const n = CAND_BY_ID[id].name;
-    if (!r2.sales[id]) e(IDS.sales(id), tt(`${B("3.3")}: choose a sales model for ${n}.`, `${B("3.3")}: Wählen Sie ein Vertriebsmodell für ${n}.`));
-    if ((r2.prop[id] ?? "").trim().length < MIN_SENTENCE) e(IDS.sales(id), tt(`${B("3.3")}: write the value proposition for ${n} (at least ${MIN_SENTENCE} characters).`, `${B("3.3")}: Schreiben Sie das Nutzenversprechen für ${n} (mindestens ${MIN_SENTENCE} Zeichen).`));
+    if (!isOptionalBlock("b33") && !r2.sales[id]) e(IDS.sales(id), tt(`${B("3.3")}: choose a sales model for ${n}.`, `${B("3.3")}: Wählen Sie ein Vertriebsmodell für ${n}.`));
+    if (!isOptionalBlock("b33") && (r2.prop[id] ?? "").trim().length < MIN_SENTENCE) e(IDS.sales(id), tt(`${B("3.3")}: write the value proposition for ${n} (at least ${MIN_SENTENCE} characters).`, `${B("3.3")}: Schreiben Sie das Nutzenversprechen für ${n} (mindestens ${MIN_SENTENCE} Zeichen).`));
     const unset = ELEMENT_IDS.filter((el) => !r2.grid[`${id}.${el}`]);
-    if (unset.length > 0) e(IDS.gridCol(id), tt(`${B("3.4")}: ${n} has ${unset.length} element(s) not set: ${unset.map((el) => ELEMENTS[el].name).join(", ")}.`, `${B("3.4")}: Bei ${n} sind ${unset.length} Element(e) nicht gesetzt: ${unset.map((el) => ELEMENTS[el].name).join(", ")}.`));
+    if (!isOptionalBlock("b34") && unset.length > 0) e(IDS.gridCol(id), tt(`${B("3.4")}: ${n} has ${unset.length} element(s) not set: ${unset.map((el) => ELEMENTS[el].name).join(", ")}.`, `${B("3.4")}: Bei ${n} sind ${unset.length} Element(e) nicht gesetzt: ${unset.map((el) => ELEMENTS[el].name).join(", ")}.`));
   }
   const f = funded(r2);
   if (f.length === 0) e(IDS.archTotal, tt(`${B("3.5")}: fund at least one item.`, `${B("3.5")}: Finanzieren Sie mindestens einen Punkt.`));
